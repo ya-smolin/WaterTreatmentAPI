@@ -10,14 +10,14 @@ classdef IsotermModel
     methods
         function I = IsotermModel(isotermType, Cr, Ar)
             curIsotermFitmodel = isotermType.fitmodel;
-            isotermFun = isotermType.handler;
             curConstants = isotermType.constants;
             
             if(isempty(curConstants) && ~isempty(probnames(curIsotermFitmodel)))
                 disp('you did not set isoterm constant parameter');
                 return;
-                %TODO: make avto replace parameter on variable
             end
+            
+            isotermFun = isotermType.handler;
             if ~isempty(curConstants)
                 errorIsotermFun = @(k)sum((isotermFun(k, curConstants, Cr) - Ar).^2);  
             else
@@ -28,8 +28,9 @@ classdef IsotermModel
             curUpperB = isotermType.upperB;
 
             opts = fitoptions(curIsotermFitmodel);
-            populSize = 20;
-            opts.StartPoint = I.getStartPointUsingGA(errorIsotermFun, numcoeffs(curIsotermFitmodel), curLowerB, curUpperB, populSize);
+            populSize = 4 ^ length(curUpperB);
+            %opts.StartPoint = I.getStartPointUsingGA(errorIsotermFun, numcoeffs(curIsotermFitmodel), curLowerB, curUpperB, populSize);
+            opts.StartPoint = I.getStartPointUsingSA(errorIsotermFun, curLowerB, curUpperB);
             opts.Display = 'Off';
             opts.Lower = curLowerB;
             opts.Upper = curUpperB;
@@ -53,7 +54,7 @@ classdef IsotermModel
             %% Modify options setting
             %options = gaoptimset(options,'FitnessLimit', 0.8);
             %options = gaoptimset(options,'InitialPopulation', initialPopulation);
-            options = gaoptimset(options,'PopInitRange', [0; 1000]);
+            options = gaoptimset(options,'PopInitRange',  [0; 100]);
             options = gaoptimset(options,'PopulationSize', populSize);
             options = gaoptimset(options,'Generations', 100);
             %options = gaoptimset(options,'StallGenLimit', 20);
@@ -63,11 +64,29 @@ classdef IsotermModel
             %options = gaoptimset(options,'PlotFcns', { @gaplotbestf });
             startPoint = ga(fun, nvars,[],[],[],[],lb,ub,[],[],options);
         end
-        
-        function startPoint = getRandomStartPoint(dim, range)
-            startPoint = random('Uniform', range(1), range(2), dim, 1);
+        function x0 = getStartPointUsingUniform(lb, ub)
+            x0 = random('Uniform', lb, ub);
         end
-    end
-    
+        
+        function startPoint = getStartPointUsingSA(fun, lb, ub)
+            K = length(lb);
+            N = length(ub);
+            if K~=N
+                error('the length of upper bound does not equal lower.');
+            end
+            %% This is an auto generated MATLAB file from Optimization Tool.
+            x0 = IsotermModel.getStartPointUsingUniform(lb, ub);
+            
+            %% Start with the default options
+            options = saoptimset;
+            %% Modify options setting
+            options = saoptimset(options,'Display', 'off');
+            options = saoptimset(options,'HybridInterval', 'end');
+            startPoint = simulannealbnd(fun,x0,lb,ub,options);
+            display(startPoint);
+        end
+
+      end
+      
 end
 
