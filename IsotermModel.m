@@ -2,52 +2,81 @@ classdef IsotermModel
     %UNTITLED Summary of this class goes here
     %   Detailed explanation goes here
     
+    properties(Constant)
+       zero = 1e-16;
+    end
     properties
+        isotermType; %IsotermType
         isotermResult;  %cfit
-        gof = struct( 'sse', [], 'rsquare', [], 'dfe', [], 'adjrsquare', [], 'rmse', [] );
+        gof; %struct( 'sse', [], 'rsquare', [], 'dfe', [], 'adjrsquare', [], 'rmse', [] );
     end
     
     methods
         function I = IsotermModel(isotermType, Cr, Ar)
             curIsotermFitmodel = isotermType.fitmodel;
             curConstants = isotermType.constants;
+            lowerB = isotermType.lowerB;
+            upperB = isotermType.upperB;
             
-            if(isempty(curConstants) && ~isempty(probnames(curIsotermFitmodel)))
-                disp('you did not set isoterm constant parameter');
-                return;
+            %if bounds depends from Cr or Ar
+            if(strcmp(isotermType.name,'Temkin'))
+                lowerB = [0, 1/min(Cr)];
+                %we do not have to use first point for temkin isoterm
+            else
+                Cr(end+1) = I.zero;
+                Ar(end+1) = I.zero;        
             end
             
             isotermFun = isotermType.handler;
+            pNum = length(probnames(curIsotermFitmodel));
             if ~isempty(curConstants)
-                errorIsotermFun = @(k)sum((isotermFun(k, curConstants, Cr) - Ar).^2);  
+                if(pNum == length(curConstants))
+                    isotermFunPar = @(k)isotermFun(k, curConstants, Cr);
+                else
+                    error('pNum != length(curConstants)');
+                end
             else
-                errorIsotermFun = @(k)sum((isotermFun(k, Cr) - Ar).^2);
+                if(pNum~=0)
+                    disp('avto parameter fitting');
+                    fstr = formula(isotermType.fitmodel);
+                    kNum = numcoeffs(curIsotermFitmodel);
+                    for j = 1:pNum
+                        fstr = strrep(fstr, strcat('p',num2str(j)), strcat('k',num2str(kNum+1)));
+                        lowerB(end+1) = max(Cr);
+                        upperB(end+1) = Inf;
+                    end
+                    isotermType = IsotermType(isotermType.name, fstr, lowerB, upperB);
+                    isotermFunPar = @(k)isotermType.handler(k, Cr);
+                    curIsotermFitmodel = isotermType.fitmodel;
+                else
+                    isotermFunPar = @(k)isotermFun(k, Cr);
+                end
             end
-
-            curLowerB = isotermType.lowerB;
-            curUpperB = isotermType.upperB;
-
+          
+           
+            errorIsotermFun = @(k)sum((isotermFunPar(k) - Ar).^2);
+            
             opts = fitoptions(curIsotermFitmodel);
-            populSize = 4 ^ length(curUpperB);
-            %opts.StartPoint = I.getStartPointUsingGA(errorIsotermFun, numcoeffs(curIsotermFitmodel), curLowerB, curUpperB, populSize);
-            opts.StartPoint = I.getStartPointUsingSA(errorIsotermFun, curLowerB, curUpperB);
+            opts.StartPoint = I.getStartPointUsingSA(errorIsotermFun, lowerB, upperB);
             opts.Display = 'Off';
-            opts.Lower = curLowerB;
-            opts.Upper = curUpperB;
+            opts.Lower = lowerB;
+            opts.Upper = upperB;
             opts.Robust = 'LAR';
             opts.Algorithm = 'Trust-Region';
             [xData, yData] = prepareCurveData(Cr, Ar);
             if ~isempty(curConstants)
-                [fitResult, gof] = fit(xData,   yData,   curIsotermFitmodel, opts, 'problem',curConstants);
+                [fitResult, gof] = fit(xData,   yData,   curIsotermFitmodel, opts, 'problem', curConstants);
             else
                 [fitResult, gof] = fit(xData,   yData,   curIsotermFitmodel, opts);
             end
+            I.isotermType = isotermType;
             I.isotermResult = fitResult;
             I.gof = gof;
-        end    
+        end
+        
     end
     
-      methods(Static)
+    methods(Static)
         function startPoint = getStartPointUsingGA(fun, nvars, lb, ub, populSize)
             %% Start with the default options
             options = gaoptimset;
@@ -85,8 +114,8 @@ classdef IsotermModel
             startPoint = simulannealbnd(fun,x0,lb,ub,options);
             display(startPoint);
         end
-
-      end
-      
+        
+    end
+    
 end
 

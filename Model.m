@@ -1,6 +1,6 @@
 classdef Model < handle
     
-    properties
+    properties(Constant)
         isotermTypes = {
             %{
             k1: Q0 the maximum sorption density [M/M]
@@ -72,11 +72,13 @@ classdef Model < handle
             %}
             IsotermType('Dubinina-Radushkevitsa','k1*exp(-k2*log(k3/c)^2)', [0 0 0], [1e6, 1e6, 1e6]),...
             };
+   end
+   properties
         Cr;
         Ar;
         isoterms;
    end
-    
+   
     methods
         function M = Model(Cr, Ar)
             M.Cr = Cr;
@@ -84,45 +86,21 @@ classdef Model < handle
             M.isoterms = cell(length(M.isotermTypes), 1);
         end
         
-        function calculate(M)
-            %M.isotermTypes{7}.constants = 56;
-            
-            for i = 1:length(M.isotermTypes)
+        function calculate(M, isotermsID)
+            for i = isotermsID
 %                 if i~=1 continue; end  
                 isotermType = M.isotermTypes{i};
-                curIsotermFitmodel = isotermType.fitmodel;
-                curConstants = isotermType.constants;
-                pNum = length(probnames(curIsotermFitmodel));
-                if(isempty(curConstants) && pNum~=0)
-                    disp('avto parameter fitting');
-                    fstr = formula(isotermType.fitmodel);
-                    kNum = numcoeffs(curIsotermFitmodel);
-                    lowerB = isotermType.lowerB;
-                    upperB = isotermType.upperB;
-                    for j = 1:pNum
-                        fstr = strrep(fstr, strcat('p',num2str(j)), strcat('k',num2str(kNum+1)));
-                        lowerB = [lowerB, max(M.Cr)];
-                        upperB = [upperB, Inf];
-                    end
-                    isotermType = IsotermType(isotermType.name, fstr, lowerB, upperB);
-                end
-                M.isotermTypes{i} = isotermType; %change modelType or not?
-                if(strcmp(isotermType.name,'Temkin'))
-                    isotermType.lowerB = [0, 1/min(M.Cr(2:end))];
-                    M.isoterms{i} = IsotermModel(isotermType, M.Cr(2:end), M.Ar(2:end));
-                else
-                     M.isoterms{i} = IsotermModel(isotermType, M.Cr, M.Ar);
-                end
-               
-                if isempty(M.isoterms{i}.isotermResult)
+                isotermModel = IsotermModel(isotermType, M.Cr, M.Ar);
+                if isempty(isotermModel.isotermResult)
+                    display(['result is empty for isoterm #' num2str(i)]);
                     continue;
                 end
                 
                 subplot(3,3,mod(i-1, 9)+1)
                 plot(M.Cr, M.Ar,'greeno', 'LineWidth', 3);
                 hold on;
-                plot(M.isoterms{i}.isotermResult);
-                display(M.isoterms{i}.isotermResult);
+                plot(isotermModel.isotermResult);
+                display(isotermModel.isotermResult);
                 legend('off');
             end
         end

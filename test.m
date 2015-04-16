@@ -1,7 +1,9 @@
-% clear all;
-global errorIsotermFun;
+s=dbstatus;
+save('myBreakpoints.mat', 's');
+clear all
+load('myBreakpoints.mat');
+dbstop(s);
 Cr = [
-    0.0000001
     0.5
     1
     2
@@ -15,7 +17,6 @@ Cr = [
     ];
 
 Ar = [
-    0.0000001
     83.25
     99.8
     124.5
@@ -36,9 +37,10 @@ T=293;% 
 Cout_xpk=640;%Ï„Œ/Î
 % Gibbs(Cr(2:end),Ar(2:end),M,Va,Vz,T)
 % Gibbs_xpk(Cr(2:end),Ar(2:end),Va,T)
-GibbsEnergy.calculate(Cr(2:end),Ar(2:end),M,Va,Vz,T)
-% M = Model(Cr, Ar);
-% M.calculate();
+% GibbsEnergy.calculate(Cr(2:end),Ar(2:end),M,Va,Vz,T)
+M = Model(Cr, Ar);
+ar = 1:1:length(M.isotermTypes);
+M.calculate(ar);
 
 
 
