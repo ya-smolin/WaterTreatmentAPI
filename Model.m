@@ -90,7 +90,7 @@ classdef Model < handle
             for i = isotermsID
 %                 if i~=1 continue; end  
                 isotermType = M.isotermTypes{i};
-                isotermModel = IsotermModel(isotermType, M.Cr, M.Ar);
+                isotermModel = Isoterm(isotermType, M.Cr, M.Ar);
                 if isempty(isotermModel.isotermResult)
                     display(['result is empty for isoterm #' num2str(i)]);
                     continue;
