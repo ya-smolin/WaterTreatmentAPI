@@ -3,13 +3,12 @@ classdef Isoterm < handle
     %   Detailed explanation goes here
     
     properties(Constant)
-        zero = 1e-16;
-        inf = 1e9;
+        zero = 1e-9;
+        inf = 1e7;
     end
     
     properties
-        name;
-        formula;
+        isotermType;
         isotermResult;  %cfit
         gof; %struct( 'sse', [], 'rsquare', [], 'dfe', [], 'adjrsquare', [], 'rmse', [] );
     end
@@ -49,15 +48,15 @@ classdef Isoterm < handle
                 if constantSizeMustBe == contantSizeUserDef
                     %everything is OK. Contants defined correctly
                 else
-                    warning('autofitting all parameters because constantSizeMustBe ~= contantSizeUserDef');
+                    warning('autofitting all parameters\n constantSizeMustBe ~= contantSizeUserDef');
                     %autofit all parameters
                     %make all constants parameters
                     for j = 1:constantSizeMustBe
                         constants = [];
                         constNames = {};
                         formula = strrep(formula, strcat('p',num2str(j)), strcat('k',num2str(koefSizeMustBe+1)));
-                        lowerB(end+1) = max(Cr);
-                        upperB(end+1) = Inf;
+                        lowerB(end+1) = 0;
+                        upperB(end+1) = Isoterm.inf;
                     end
                 end
             end
@@ -76,7 +75,9 @@ classdef Isoterm < handle
             isotermFunPar = @(k)hFun(k, Cr);
             errorIsotermFun = @(k)sum((isotermFunPar(k) - Ar).^2);
             opts = fitoptions(fitmodel);
-            opts.StartPoint = Isoterm.getStartPointUsingSA(errorIsotermFun, lowerB, upperB);
+%             opts.StartPoint = Isoterm.getStartPointUsingSA(errorIsotermFun, lowerB, upperB);
+            opts.StartPoint = Isoterm.getStartPointUsingUniform(lowerB, upperB);
+            disp(opts.StartPoint)
             opts.Display = 'Off';
             opts.Lower = lowerB;
             opts.Upper = upperB;
@@ -89,10 +90,9 @@ classdef Isoterm < handle
                 [isotermResult, gof] = fit(xData,   yData,   fitmodel, opts);
             end
             
-            this.name = name;
+            this.isotermType = IsotermType(name, formula, lowerB, upperB);
             this.isotermResult = isotermResult;
             this.gof = gof;
-            this.formula = formula;
         end
     end
     

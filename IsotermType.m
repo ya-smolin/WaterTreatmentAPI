@@ -1,9 +1,5 @@
 classdef IsotermType < handle
     
-    properties(Constant)
-        zero = 1e-16;
-    end
-    
     properties
         name; %String
         lowerB; % double[]
@@ -30,17 +26,19 @@ classdef IsotermType < handle
             koefSizeUserDef2 = length(upperB);
             if (koefSizeUserDef1 ~= koefSizeMustBe || koefSizeUserDef2 ~= koefSizeMustBe)
                 warning('bounds have incorect size correct size');
-                lowerB = repmat(Isoterm.zero, 1, koefSizeMustBe);
+                lowerB = zeros(1, koefSizeMustBe);
                 upperB = repmat(Isoterm.inf, 1, koefSizeMustBe);
             else
-                lowerB(lowerB == 0) = this.zero;
-                upperB(upperB == 0) = this.zero;
+                %lowerB(lowerB == 0) = Isoterm.zero;
+                %upperB(upperB == 0) = Isoterm.zero;
             end
             
             this.name = name;
-            lowerB(lowerB == 0) = this.zero;
+            %lowerB(lowerB == 0) = Isoterm.zero;
+            lowerB(lowerB == Inf) = Isoterm.inf;
             this.lowerB = lowerB;
-            upperB(upperB == 0) = this.zero;
+            %upperB(upperB == 0) = Isoterm.zero;
+            upperB(upperB == Inf) = Isoterm.inf;
             this.upperB = upperB;
             this.formula = formula;
         end
