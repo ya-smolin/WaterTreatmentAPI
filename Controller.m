@@ -1,6 +1,8 @@
 s=dbstatus;
 save('myBreakpoints.mat', 's');
 clear all
+close all
+clear classes
 load('myBreakpoints.mat');
 dbstop(s);
 %2,4DNP
@@ -40,12 +42,15 @@ Cout_xpk=640;%ìãÎ/ë
 % Gibbs_xpk(Cr(2:end),Ar(2:end),Va,T)
 % GibbsEnergy.calculate(Cr(2:end),Ar(2:end),M,Va,Vz,T)
 
-% M = Model(Cr, Ar);
-% ar = 1:1:length(M.isotermTypes);
-% M.calculate(ar);
-DB = load('M.mat');
-M = DB.M;
+M = Model(Cr, Ar);
 View(M);
+ar = 1:1:length(M.isotermTypes);
+M.calculate(ar);
+
+% DB = load('M.mat');
+% M = DB.M;
+% View(M);
+
 
 
 

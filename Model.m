@@ -75,11 +75,15 @@ classdef Model < handle
             IsotermType('Dubinina-Radushkevitsa','k1*exp(-k2*log(k3/c)^2)', [0 0 0], [Inf, Inf, Inf]),...
             };
    end
-   properties
+   properties(SetAccess = public)
         Cr;
         Ar;
-        isoterms;
         parameters;
+        lastIsoInd; %crutch for Observable pattern
+   end
+   
+   properties(SetObservable = true)
+       isoterms;
    end
    
     methods
@@ -90,17 +94,20 @@ classdef Model < handle
         end
         
         function calculate(this, isotermsID)
-            for i = isotermsID
-%                 if i~=1 continue; end  
-                isotermType = this.isotermTypes{i};
+            for id = isotermsID
+                 if id~=1 continue; end
+                
+                isotermType = this.isotermTypes{id};
                 isoterm = Isoterm(isotermType, this.Cr, this.Ar);
                 if isempty(isoterm.isotermResult)
-                    display(['result is empty for isoterm #' num2str(i)]);
+                    display(['result is empty for isoterm #' num2str(id)]);
                     continue;
                 end
-                this.isoterms{i} = isoterm;
+                
+                %setter?
+                this.lastIsoInd = id;
+                this.isoterms{id} = isoterm;
             end
-            
         end
     end
     

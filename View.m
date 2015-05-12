@@ -1,7 +1,10 @@
-classdef View
+classdef View < handle
     
     properties
         handles;
+    end
+    
+    properties(SetObservable = true)
         tableRows;
     end
     
@@ -10,38 +13,61 @@ classdef View
         function this = View(M)
             %VIEW  a GUI representation of the signal model
             handles_ = View.initGUI();
+            
+            
+            
+            axes(handles_.axes)
+            plot(M.Cr, M.Ar,'greeno', 'LineWidth', 3);
+            hold on;
+            
             this.tableRows = this.formIsotermTable(M, handles_.tabOut);
             
-            plot(M.Cr, M.Ar,'greeno', 'LineWidth', 3, 'Parent', handles_.axes);
-            x = linspace(0, max(M.Cr), 1000);
-            hold on;
-            for i = 1:length(M.isoterms)
-                isoterm = M.isoterms{i};
-                if(~isempty(isoterm) && isprop(isoterm, 'isotermResult'))
-                    y = isoterm.isotermResult(x);
-                    plot(x, y, 'Parent', handles_.axes);
-                    display(isoterm.isotermResult);
-                end
-            end
-            legend('off');
+            isotermsListener = event.proplistener(M, findprop(M,'isoterms'), 'PostSet',...
+                @(o,e) this.update(handles_, e.AffectedObject));
+            setappdata(handles_.fig, 'proplistener',isotermsListener); 
             
             this.handles = handles_;
         end
         
+        function update(this, handles, M)
+            isotermId = M.lastIsoInd;
+            isoterm = M.isoterms{isotermId};
+            
+            %ploting
+            if(~isempty(isoterm) && isprop(isoterm, 'isotermResult'))
+                plot(isoterm.isotermResult);
+            end
+            legend('off');
+            
+            %table
+            if isempty(isoterm)
+                tableRow = IsotermTableRow(M.isotermTypes{isotermId});
+            else
+                tableRow = IsotermTableRow(isoterm);
+            end
+            this.tableRows{isotermId} = tableRow;
+            
+            tableRowsData = get(handles.tabOut, 'Data');
+            tableRowsData(isotermId, :) = tableRow.data;
+            set(handles.tabOut, 'Data', tableRowsData);
+            
+        end
         
         
     end
     
     methods(Static)
+        
+        
         function tableRows = formIsotermTable(M, isotermTable)
             N = length(M.isoterms);
             tableRows = cell(N, 1);
             tableRowsData = cell(N, IsotermTableRow.size);
             for i = 1:N
                 if isempty(M.isoterms{i})
-                     tableRows{i} = IsotermTableRow(M.isotermTypes{i});
+                    tableRows{i} = IsotermTableRow(M.isotermTypes{i});
                 else
-                     tableRows{i} = IsotermTableRow(M.isoterms{i});
+                    tableRows{i} = IsotermTableRow(M.isoterms{i});
                 end
                 
                 tableRowsData(i, :) = tableRows{i}.data;

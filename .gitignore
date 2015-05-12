@@ -1,3 +1,11 @@
 /isoterms_old
 
 /*.asv
+/M.mat
+/myBreakpoints.mat
+/study/Controller.m
+/study/Model.m
+/study/ViewGUIDE.fig
+/study/ViewGUIDE.m
+/study/View_FrequencyDomain.m
+/study/View_TimeDomain.m

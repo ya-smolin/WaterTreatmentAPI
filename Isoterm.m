@@ -8,6 +8,7 @@ classdef Isoterm < handle
     end
     
     properties
+        id;
         isotermType;
         isotermResult;  %cfit
         gof; %struct( 'sse', [], 'rsquare', [], 'dfe', [], 'adjrsquare', [], 'rmse', [] );

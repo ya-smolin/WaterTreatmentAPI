@@ -28,16 +28,11 @@ classdef IsotermType < handle
                 warning('bounds have incorect size correct size');
                 lowerB = zeros(1, koefSizeMustBe);
                 upperB = repmat(Isoterm.inf, 1, koefSizeMustBe);
-            else
-                %lowerB(lowerB == 0) = Isoterm.zero;
-                %upperB(upperB == 0) = Isoterm.zero;
             end
             
             this.name = name;
-            %lowerB(lowerB == 0) = Isoterm.zero;
             lowerB(lowerB == Inf) = Isoterm.inf;
             this.lowerB = lowerB;
-            %upperB(upperB == 0) = Isoterm.zero;
             upperB(upperB == Inf) = Isoterm.inf;
             this.upperB = upperB;
             this.formula = formula;
