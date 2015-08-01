@@ -76,29 +76,27 @@ classdef Model < handle
             };
    end
    properties(SetAccess = public)
-        Cr;
-        Ar;
         parameters;
         lastIsoInd; %crutch for Observable pattern
    end
-   
    properties(SetObservable = true)
        isoterms;
+       data;
    end
    
     methods
-        function M = Model(Cr, Ar)
-            M.Cr = Cr;
-            M.Ar = Ar;
+        function M = Model()
             M.isoterms = cell(length(M.isotermTypes), 1);
+        end
+        
+        function data.set(this, data)
+            this.data = data;
         end
         
         function calculate(this, isotermsID)
             for id = isotermsID
-                 if id~=1 continue; end
-                
                 isotermType = this.isotermTypes{id};
-                isoterm = Isoterm(isotermType, this.Cr, this.Ar);
+                isoterm = Isoterm(isotermType, this.data(:, 1), this.data(:, 2));
                 if isempty(isoterm.isotermResult)
                     display(['result is empty for isoterm #' num2str(id)]);
                     continue;

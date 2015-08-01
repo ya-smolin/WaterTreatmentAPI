@@ -1,38 +1,37 @@
 classdef View < handle
     
     properties
-        handles;
+        hGUI;
+        hModel;
     end
     
     properties(SetObservable = true)
-        tableRows;
+        tableRows;%?need
     end
     
     methods
         
-        function this = View(M)
+        function this = View(Model)
             %VIEW  a GUI representation of the signal model
-            handles_ = View.initGUI();
+            handles = View.initGUI();
+
+            this.tableRows = this.formIsotermTable(Model, handles.tabOut);
+            isotermsListener = event.proplistener(Model, findprop(Model,'isoterms'), 'PostSet',...
+                @(o, e)this.update());
+            setappdata(handles.fig, 'proplistener',isotermsListener);
             
+            modelDataListener = event.proplistener(Model, findprop(Model,'data'), 'PostSet',...
+                @(o, e)this.updateData());
+            setappdata(handles.fig, 'proplistener',modelDataListener);
             
-            
-            axes(handles_.axes)
-            plot(M.Cr, M.Ar,'greeno', 'LineWidth', 3);
-            hold on;
-            
-            this.tableRows = this.formIsotermTable(M, handles_.tabOut);
-            
-            isotermsListener = event.proplistener(M, findprop(M,'isoterms'), 'PostSet',...
-                @(o,e) this.update(handles_, e.AffectedObject));
-            setappdata(handles_.fig, 'proplistener',isotermsListener); 
-            
-            this.handles = handles_;
+            this.hGUI = handles;
+            this.hModel = Model;
         end
         
-        function update(this, handles, M)
-            isotermId = M.lastIsoInd;
-            isoterm = M.isoterms{isotermId};
-            
+        function update(this)
+            isotermId = this.hModel.lastIsoInd;
+            isoterm = this.hModel.isoterms{isotermId};
+            table = this.hGUI.tabOut;
             %ploting
             if(~isempty(isoterm) && isprop(isoterm, 'isotermResult'))
                 plot(isoterm.isotermResult);
@@ -40,19 +39,23 @@ classdef View < handle
             legend('off');
             
             %table
-            if isempty(isoterm)
-                tableRow = IsotermTableRow(M.isotermTypes{isotermId});
-            else
-                tableRow = IsotermTableRow(isoterm);
-            end
+            tableRow = IsotermTableRow(isoterm);
             this.tableRows{isotermId} = tableRow;
             
-            tableRowsData = get(handles.tabOut, 'Data');
+            tableRowsData = get(table, 'Data');
             tableRowsData(isotermId, :) = tableRow.data;
-            set(handles.tabOut, 'Data', tableRowsData);
+            set(table, 'Data', tableRowsData);
             
         end
-        
+        function updateData(this)
+            Model = this.hModel;
+            handles = this.hGUI;
+            axes(handles.axes);
+            Cr = Model.data(:, 1);
+            Ar = Model.data(:, 2);
+            plot(Cr, Ar, 'greeno', 'LineWidth', 3);
+            hold on;
+        end
         
     end
     
@@ -69,34 +72,40 @@ classdef View < handle
                 else
                     tableRows{i} = IsotermTableRow(M.isoterms{i});
                 end
-                
                 tableRowsData(i, :) = tableRows{i}.data;
             end
-            set(isotermTable, 'Units','normalized', 'Data', tableRowsData,...
+            set(isotermTable, 'Data', tableRowsData,...
                 'ColumnName', IsotermTableRow.columnName, 'ColumnFormat', IsotermTableRow.columnFormat,...
                 'ColumnEditable', IsotermTableRow.columnEditable);
-            columnWidth = cell(1, N);
-            columnWidth(:) = {'auto'};
-            set(isotermTable,'ColumnWidth',columnWidth);
+            
+            columnWidth = max(cellfun('length', tableRowsData));
+            columnWidth(columnWidth < 6) = 0;
+            columnWidth = columnWidth * 7;
+            columnWidthCell = num2cell(columnWidth);
+            for i = 1:length(columnWidthCell)
+                if(columnWidthCell{i} == 0)
+                    columnWidthCell{i} = 'auto';
+                end
+            end
+            set(isotermTable,'ColumnWidth',columnWidthCell);
         end
+        
         
         function handles = initGUI()
             % load FIG file (its really a MAT-file)
             hFig = hgload('View.fig');
+            handles = struct('fig',hFig);
+            tags = {'axes', 'checkConfInt', 'editConfInt', 'editConfInt', 'butRecalc', 'tabIn',...
+                'tabOut', 'butPlusRow', 'butMinusRow', 'butLoadData', 'menuTabIn', 'contextPaste'};
             % extract handles to GUI components
-            hAx = findobj(hFig, 'tag','axes');
-            hCheckConfInt = findobj(hFig, 'tag','checkConfInt');
-            hEditConfInt = findobj(hFig, 'tag','editConfInt');
-            hButRecalc = findobj(hFig, 'tag','butRecalc');
-            hTabIn = findobj(hFig, 'tag','tabIn');
-            hTabOut = findobj(hFig, 'tag','tabOut');
+            for tag = tags
+                 tag = char(tag);
+                 hTag = findobj(hFig, 'tag', tag);
+                 handles.(tag) = hTag;
+            end
             
-            hButLoadData = findobj(hFig, 'tag','butLoadData');
-            
-            % return a structure of GUI handles
-            handles = struct('fig',hFig, 'axes',hAx, 'checkConfInt',hCheckConfInt, ...
-                'editConfInt',hEditConfInt, 'butLoadData',hButLoadData, 'butRecalc',...
-                hButRecalc, 'tabIn', hTabIn, 'tabOut', hTabOut);
+            set(handles.tabIn, 'uicontextmenu', handles.menuTabIn);
         end
+        
     end
 end

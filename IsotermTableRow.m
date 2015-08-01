@@ -3,7 +3,8 @@ classdef IsotermTableRow
     %   Detailed explanation goes here
     
     properties(Constant)
-        columnName =      {'name',    'formula',  'koef',     'params',   'show',     'rsquare', 'sse',     'koef range'};
+        columnShow = 5;
+        columnName =      {'name',    'formula',  'koef',     'params',   'show',     'rsquare', 'sse', 'koef range'};
         columnFormat =    {'char',    'char',     'char',  'char',  'logical',  'numeric', 'numeric', 'char'}
         columnEditable =  [false,   false,    false,    true,     true,     false,   false,   false]
         size = length(IsotermTableRow.columnName);
@@ -38,16 +39,16 @@ classdef IsotermTableRow
                 this.data = {
                     isotermType.name,...
                     isotermType.formula,...
-                    mat2str(coeffvalues(isotermResult), 2),...
+                    mat2str(round(coeffvalues(isotermResult) * 100) / 100),...
                     char(probvalues(isotermResult)),...
                     true,...
                     gof.adjrsquare,...
                     gof.sse,...
-                    mat2str(confInt, 2)
+                    mat2str(round(confInt * 100) / 100)
                     };
             end
         end
     end
-    
+
 end
 

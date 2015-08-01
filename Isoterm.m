@@ -78,7 +78,6 @@ classdef Isoterm < handle
             opts = fitoptions(fitmodel);
 %             opts.StartPoint = Isoterm.getStartPointUsingSA(errorIsotermFun, lowerB, upperB);
             opts.StartPoint = Isoterm.getStartPointUsingUniform(lowerB, upperB);
-            disp(opts.StartPoint)
             opts.Display = 'Off';
             opts.Lower = lowerB;
             opts.Upper = upperB;
@@ -127,6 +126,7 @@ classdef Isoterm < handle
             %options = gaoptimset(options,'EliteCount', 3);
             %options = gaoptimset(options,'PlotFcns', { @gaplotbestf });
             startPoint = ga(fun, nvars,[],[],[],[],lb,ub,[],[],options);
+            %disp(opts.StartPoint)
         end
         function x0 = getStartPointUsingUniform(lb, ub)
             x0 = random('Uniform', lb, ub);
