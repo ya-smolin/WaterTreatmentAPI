@@ -1,7 +1,4 @@
 classdef IsotermTableRow
-    %TABLEROWVIEW Summary of this class goes here
-    %   Detailed explanation goes here
-    
     properties(Constant)
         columnShow = 5;
         columnName =      {'name',    'formula',  'koef',     'params',   'show',     'rsquare', 'sse', 'koef range'};
@@ -19,7 +16,7 @@ classdef IsotermTableRow
             if nargin == 1
                 confidenceLevel = IsotermTableRow.CONFIDENCE_LEVEL_DEFAULT;
             end
-            if isa(isoterm, 'IsotermType')
+            if isa(isoterm, 'IsotermType') 
                 this.data = {
                     isoterm.name,...
                     isoterm.formula,...

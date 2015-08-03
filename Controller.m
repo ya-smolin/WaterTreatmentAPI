@@ -7,11 +7,12 @@ classdef Controller < handle
         function this = Controller()
             model = Model();
             view = View(model);
-            set(view.hGUI.contextPaste, 'Callback',{@Controller.copyExcel,view.hGUI.tabIn})
-            set(view.hGUI.butPlusRow, 'Callback',{@Controller.onClickPlusRow,view.hGUI.tabIn})
-            set(view.hGUI.butMinusRow, 'Callback',{@Controller.onClickMinusRow,view.hGUI.tabIn})
-            set(view.hGUI.butLoadData, 'Callback',@this.onClickLoadData)
-           
+            set(view.hGUI.contextPaste, 'Callback',{@Controller.copyExcel,view.hGUI.tabIn});
+            set(view.hGUI.butPlusRow, 'Callback',{@Controller.onClickPlusRow,view.hGUI.tabIn});
+            set(view.hGUI.butMinusRow, 'Callback',{@Controller.onClickMinusRow,view.hGUI.tabIn});
+            set(view.hGUI.butLoadData, 'Callback',@this.onClickLoadData);
+            set(view.hGUI.tabOut, 'CellEditCallback', @this.onTableEdit);
+            set(view.hGUI.butRecalc, 'Callback', @this.onClickRecalculate);
             %2,4DNP
             Cr = [
                 0.5
@@ -44,16 +45,48 @@ classdef Controller < handle
             this.view = view;
         end
         
+        function onClickRecalculate(this, butRecalc, event)
+            isotermsIdList = this.view.getCheckedRows();
+            this.model.calculate(isotermsIdList);
+        end
+        
         function onClickLoadData(this, o, e)
+            %clear last isotermResults
+            len = length(this.model.isotermTypes);
+            for i=1:len
+                isoterm = this.model.isoterms{i};
+                if(~isempty(isoterm)) 
+                    this.model.isoterms{i} = [];
+                end
+            end
             tableIn = this.view.hGUI.tabIn;
-            tableOut = this.view.hGUI.tabOut;
+           
             dataIn = get(tableIn, 'Data');
-            dataOut = get(tableOut, 'Data');
-            isShown = dataOut(:, IsotermTableRow.columnShow);
+            this.onClickRecalculate(this);
             this.model.data = dataIn;
             
-            ar = find(cell2mat(isShown) == 1);
-            this.model.calculate(ar');
+
+        end
+        
+        function onTableEdit(this, table, eventData)
+            row = eventData.Indices(1);
+            col = eventData.Indices(2);
+            tableOut = this.view.hGUI.tabOut;
+            dataOut = get(tableOut, 'Data');
+            
+            if(col == IsotermTableRow.columnShow)
+                if(dataOut{row, col} == 1)
+                    if isempty(this.model.isoterms{row})
+                        this.model.calculate(row);
+                    else
+                        hLine = this.view.axisHandles(row);
+                        set(hLine,'Visible','on');
+                    end
+                else
+                    hLine = this.view.axisHandles(row);
+                    set(hLine,'Visible','off');
+                end
+            end
         end
     end
     
@@ -67,7 +100,7 @@ classdef Controller < handle
         
         function onClickPlusRow(o, e, table)
             data = get(table, 'Data');
-            data(end+1,:) = {[]};
+            data(end+1,:) = [0, 0];
             set(table, 'Data', data);
         end
         

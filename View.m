@@ -7,6 +7,8 @@ classdef View < handle
     
     properties(SetObservable = true)
         tableRows;%?need
+        axisHandles = []
+        hDataAxes
     end
     
     methods
@@ -31,10 +33,15 @@ classdef View < handle
         function update(this)
             isotermId = this.hModel.lastIsoInd;
             isoterm = this.hModel.isoterms{isotermId};
+            if(isempty(isoterm))
+                isoterm = this.hModel.isotermTypes{isotermId};
+%                 delete(this.axisHandles(isotermId));
+            end
             table = this.hGUI.tabOut;
             %ploting
             if(~isempty(isoterm) && isprop(isoterm, 'isotermResult'))
-                plot(isoterm.isotermResult);
+                h = plot(isoterm.isotermResult);
+                this.axisHandles(isotermId) = h;
             end
             legend('off');
             
@@ -45,18 +52,28 @@ classdef View < handle
             tableRowsData = get(table, 'Data');
             tableRowsData(isotermId, :) = tableRow.data;
             set(table, 'Data', tableRowsData);
-            
         end
+        
         function updateData(this)
-            Model = this.hModel;
+            data = this.hModel.data;
+            delete(this.hDataAxes);
+            cla;
             handles = this.hGUI;
             axes(handles.axes);
-            Cr = Model.data(:, 1);
-            Ar = Model.data(:, 2);
-            plot(Cr, Ar, 'greeno', 'LineWidth', 3);
+            data(end, :) = [0, 0];
+            Cr = data(:, 1);
+            Ar = data(:, 2);
+            this.hDataAxes = plot(Cr, Ar, 'greeno', 'LineWidth', 3);
+            this.axisHandles = zeros(length(Cr), 1);
             hold on;
         end
         
+        function isotermIdList = getCheckedRows(this)
+            tableOut = this.hGUI.tabOut;
+            dataOut = get(tableOut, 'Data');
+            isShownColumn = dataOut(:, IsotermTableRow.columnShow);
+            isotermIdList = find(cell2mat(isShownColumn) == 1)';
+        end
     end
     
     methods(Static)
