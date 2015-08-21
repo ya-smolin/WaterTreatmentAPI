@@ -2,6 +2,7 @@ classdef Controller < handle
     properties
         model;
         view;
+        data = [];
     end
     methods
         function this = Controller()
@@ -47,27 +48,24 @@ classdef Controller < handle
         
         function onClickRecalculate(this, butRecalc, event)
             isotermsIdList = this.view.getCheckedRows();
+            tableIn = this.view.hGUI.tabIn;
+            dataIn = get(tableIn, 'Data');
+            if(~isequal(this.data, dataIn))
+                this.model.data = dataIn;
+                this.model.isoterms = cell(Model.size, 1);
+            end
+            this.data = dataIn;
+            
+            table = this.view.hGUI.tabOut;
+            tableRowsData = get(table, 'Data');
+            for i = isotermsIdList
+                tableRowsData{i, IsotermTableRow.columnShow} = true;
+            end
+            set(table, 'Data', tableRowsData);
+            
             this.model.calculate(isotermsIdList);
         end
-        
-        function onClickLoadData(this, o, e)
-            %clear last isotermResults
-            len = length(this.model.isotermTypes);
-            for i=1:len
-                isoterm = this.model.isoterms{i};
-                if(~isempty(isoterm)) 
-                    this.model.isoterms{i} = [];
-                end
-            end
-            tableIn = this.view.hGUI.tabIn;
-           
-            dataIn = get(tableIn, 'Data');
-            this.onClickRecalculate(this);
-            this.model.data = dataIn;
-            
 
-        end
-        
         function onTableEdit(this, table, eventData)
             row = eventData.Indices(1);
             col = eventData.Indices(2);
@@ -77,7 +75,7 @@ classdef Controller < handle
             if(col == IsotermTableRow.columnShow)
                 if(dataOut{row, col} == 1)
                     if isempty(this.model.isoterms{row})
-                        this.model.calculate(row);
+%                         this.model.calculate(row);
                     else
                         hLine = this.view.axisHandles(row);
                         set(hLine,'Visible','on');

@@ -19,7 +19,7 @@ classdef View < handle
 
             this.tableRows = this.formIsotermTable(Model, handles.tabOut);
             isotermsListener = event.proplistener(Model, findprop(Model,'isoterms'), 'PostSet',...
-                @(o, e)this.update());
+                @(o, e)this.update(o, e));
             setappdata(handles.fig, 'proplistener',isotermsListener);
             
             modelDataListener = event.proplistener(Model, findprop(Model,'data'), 'PostSet',...
@@ -30,28 +30,31 @@ classdef View < handle
             this.hModel = Model;
         end
         
-        function update(this)
-            isotermId = this.hModel.lastIsoInd;
-            isoterm = this.hModel.isoterms{isotermId};
-            if(isempty(isoterm))
-                isoterm = this.hModel.isotermTypes{isotermId};
-%                 delete(this.axisHandles(isotermId));
-            end
-            table = this.hGUI.tabOut;
-            %ploting
-            if(~isempty(isoterm) && isprop(isoterm, 'isotermResult'))
-                h = plot(isoterm.isotermResult);
-                this.axisHandles(isotermId) = h;
-            end
-            legend('off');
+        function update(this, o, e)
+            chekedIds = this.getCheckedRows();
+            for isotermId = chekedIds
+                isoterm = this.hModel.isoterms{isotermId};
+                
+                if(isempty(isoterm) || isempty(isoterm.isotermResult))
+                    isoterm = this.hModel.isotermTypes{isotermId};
+    %                 delete(this.axisHandles(isotermId));
+                end   
+                table = this.hGUI.tabOut;
+                %table
+                tableRow = IsotermTableRow(isoterm);
+                this.tableRows{isotermId} = tableRow;
+
+                tableRowsData = get(table, 'Data');
+                tableRowsData(isotermId, :) = tableRow.data;
+                set(table, 'Data', tableRowsData);
             
-            %table
-            tableRow = IsotermTableRow(isoterm);
-            this.tableRows{isotermId} = tableRow;
-            
-            tableRowsData = get(table, 'Data');
-            tableRowsData(isotermId, :) = tableRow.data;
-            set(table, 'Data', tableRowsData);
+                %ploting
+                if(~isempty(isoterm) && isprop(isoterm, 'isotermResult'))
+                    h = plot(isoterm.isotermResult);
+                    this.axisHandles(isotermId) = h;
+                end
+                legend('off');
+            end
         end
         
         function updateData(this)
@@ -77,8 +80,6 @@ classdef View < handle
     end
     
     methods(Static)
-        
-        
         function tableRows = formIsotermTable(M, isotermTable)
             N = length(M.isoterms);
             tableRows = cell(N, 1);

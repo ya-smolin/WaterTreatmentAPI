@@ -74,6 +74,7 @@ classdef Model < handle
             %}
             IsotermType('Dubinina-Radushkevitsa','k1*exp(-k2*log(k3/c)^2)', [0 0 0], [Inf, Inf, Inf]),...
             };
+        size = length(Model.isotermTypes);
    end
    properties(SetAccess = public)
         parameters;
@@ -86,7 +87,7 @@ classdef Model < handle
    
     methods
         function M = Model()
-            M.isoterms = cell(length(M.isotermTypes), 1);
+            M.isoterms = cell(Model.size, 1);
         end
         
         function data.set(this, data)
@@ -94,6 +95,8 @@ classdef Model < handle
         end
         
         function calculate(this, isotermsID)
+            isoterms_ = cell(length(isotermsID), 1);
+            i=1;
             for id = isotermsID
                 isotermType = this.isotermTypes{id};
                 isoterm = Isoterm(isotermType, this.data(:, 1), this.data(:, 2));
@@ -101,11 +104,17 @@ classdef Model < handle
                     display(['result is empty for isoterm #' num2str(id)]);
                     continue;
                 end
-                
+                isoterms_{i} = isoterm;
+                i = i + 1;
                 %setter?
-                this.lastIsoInd = id;
-                this.isoterms{id} = isoterm;
+%                 this.lastIsoInd = id;
             end
+            this.isoterms(isotermsID) = isoterms_;
+        end
+        
+        function clear(this, isotermID)
+%             this.lastIsoInd = isotermID;
+            this.isoterms{isotermID}.isotermResult = [];
         end
     end
     
