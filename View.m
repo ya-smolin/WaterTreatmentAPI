@@ -31,10 +31,12 @@ classdef View < handle
         end
         
         function update(this, o, e)
-            chekedIds = this.getCheckedRows();
-            for isotermId = chekedIds
+                isotermId = this.hModel.lastIsoInd;
+                if(isotermId == -1)
+                    this.formIsotermTable(this.hModel, this.hGUI.tabOut);
+                    return;
+                end
                 isoterm = this.hModel.isoterms{isotermId};
-                
                 if(isempty(isoterm) || isempty(isoterm.isotermResult))
                     isoterm = this.hModel.isotermTypes{isotermId};
     %                 delete(this.axisHandles(isotermId));
@@ -54,7 +56,6 @@ classdef View < handle
                     this.axisHandles(isotermId) = h;
                 end
                 legend('off');
-            end
         end
         
         function updateData(this)

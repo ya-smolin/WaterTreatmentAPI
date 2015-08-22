@@ -78,7 +78,7 @@ classdef Model < handle
    end
    properties(SetAccess = public)
         parameters;
-        lastIsoInd; %crutch for Observable pattern
+        lastIsoInd = -1; %crutch for Observable pattern
    end
    properties(SetObservable = true)
        isoterms;
@@ -95,8 +95,6 @@ classdef Model < handle
         end
         
         function calculate(this, isotermsID)
-            isoterms_ = cell(length(isotermsID), 1);
-            i=1;
             for id = isotermsID
                 isotermType = this.isotermTypes{id};
                 isoterm = Isoterm(isotermType, this.data(:, 1), this.data(:, 2));
@@ -104,17 +102,16 @@ classdef Model < handle
                     display(['result is empty for isoterm #' num2str(id)]);
                     continue;
                 end
-                isoterms_{i} = isoterm;
-                i = i + 1;
                 %setter?
-%                 this.lastIsoInd = id;
+                this.lastIsoInd = id;
+                this.isoterms{id} = isoterm;
             end
-            this.isoterms(isotermsID) = isoterms_;
         end
         
-        function clear(this, isotermID)
-%             this.lastIsoInd = isotermID;
-            this.isoterms{isotermID}.isotermResult = [];
+        function clear(this)
+            this.lastIsoInd = -1;
+            this.isoterms = cell(Model.size, 1);
+            
         end
     end
     

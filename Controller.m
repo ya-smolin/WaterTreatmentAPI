@@ -52,7 +52,7 @@ classdef Controller < handle
             dataIn = get(tableIn, 'Data');
             if(~isequal(this.data, dataIn))
                 this.model.data = dataIn;
-                this.model.isoterms = cell(Model.size, 1);
+                this.model.clear();
             end
             this.data = dataIn;
             
