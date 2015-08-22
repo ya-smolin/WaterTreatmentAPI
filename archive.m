@@ -11,3 +11,11 @@
             % DB = load('M.mat');
             % M = DB.M;
             % View(M);
+            
+            
+            %             l = legend(isoterm.isotermType.name);
+            
+%             hLegend = this.leg{isotermId};
+%             if(~isempty(hLegend))delete(hLegend); end;
+%             this.leg{isotermId} = l;
+%             this.leg = cell(this.hModel.size, 1);

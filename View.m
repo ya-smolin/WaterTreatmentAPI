@@ -3,6 +3,7 @@ classdef View < handle
     properties
         hGUI;
         hModel;
+        leg;
     end
     
     properties(SetObservable = true)
@@ -53,9 +54,14 @@ classdef View < handle
                 %ploting
                 if(~isempty(isoterm) && isprop(isoterm, 'isotermResult'))
                     h = plot(isoterm.isotermResult);
+                    hLine = this.axisHandles(isotermId);
+                    if(hLine ~= 0) 
+                        delete(hLine);
+                    end;
                     this.axisHandles(isotermId) = h;
+                    legend('off');
                 end
-                legend('off');
+                
         end
         
         function updateData(this)
@@ -68,7 +74,7 @@ classdef View < handle
             Cr = data(:, 1);
             Ar = data(:, 2);
             this.hDataAxes = plot(Cr, Ar, 'greeno', 'LineWidth', 3);
-            this.axisHandles = zeros(length(Cr), 1);
+            this.axisHandles = zeros(this.hModel.size, 1);
             hold on;
         end
         

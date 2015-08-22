@@ -1,0 +1,31 @@
+USABILITY
+---------------
+legend for plot
+different colors and appearence for plot lines
+sorting by r^2, RSME
+posibility to add parameters
+help(manual) for isoterms
+saving plots
+plot only in interval from 0 to 1.1*max(Cr) and from 0 to 1.1*max(Ar)
+confidence interval
+
+GIBBS
+ohhh
+=======================
+
+BUGS
+----------------
+if data size is less than parameters size program crush, because regrassion is crushed
+=======================
+
+TESTING
+----------------
+fitting with global search
+=======================
+
+LOGIC
+----------------
+searching start point another way
+play with Maguart method, bounds, data preprocessing
+add new isoterms
+=======================
