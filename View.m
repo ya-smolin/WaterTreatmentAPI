@@ -121,7 +121,7 @@ classdef View < handle
             hFig = hgload('View.fig');
             handles = struct('fig',hFig);
             tags = {'axes', 'checkConfInt', 'editConfInt', 'editConfInt', 'butRecalc', 'tabIn',...
-                'tabOut', 'butPlusRow', 'butMinusRow', 'butLoadData', 'menuTabIn', 'contextPaste'};
+                'tabOut', 'butPlusRow', 'butMinusRow', 'butLoadData', 'menuTabIn', 'contextPaste', 'edP1', 'tvP1', 'cbP1'};
             % extract handles to GUI components
             for tag = tags
                  tag = char(tag);

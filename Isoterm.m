@@ -84,8 +84,8 @@ classdef Isoterm < handle
             opts.Robust = 'LAR';
             opts.Algorithm = 'Trust-Region';
             [xData, yData] = prepareCurveData(Cr, Ar);
-            if ~isempty(constants)
-                [isotermResult, gof] = fit(xData,   yData,   fitmodel, opts, 'problem', curConstants);
+            if ~isempty(constants) && ~isempty(constNames)
+                [isotermResult, gof] = fit(xData,   yData,   fitmodel, opts, 'problem', constants);
             else
                 [isotermResult, gof] = fit(xData,   yData,   fitmodel, opts);
             end

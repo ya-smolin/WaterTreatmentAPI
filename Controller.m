@@ -14,6 +14,7 @@ classdef Controller < handle
             set(view.hGUI.butLoadData, 'Callback',@this.onClickLoadData);
             set(view.hGUI.tabOut, 'CellEditCallback', @this.onTableEdit);
             set(view.hGUI.butRecalc, 'Callback', @this.onClickRecalculate);
+            set(view.hGUI.cbP1, 'Callback', @this.onCheckP1);
             %2,4DNP
             Cr = [
                 0.5
@@ -45,8 +46,22 @@ classdef Controller < handle
             this.model = model;
             this.view = view;
         end
-        
+        function onCheckP1(this, cbP1, event)
+            isChecked =  get(cbP1, 'Value');
+             hEdP1 = this.view.hGUI.edP1;
+            if(isChecked)
+               set(hEdP1, 'Visible', 'off');
+            else
+               set(hEdP1, 'Visible', 'on');
+            end
+        end
         function onClickRecalculate(this, butRecalc, event)
+            isChecked =  get(this.view.hGUI.cbP1, 'Value');
+            if(isChecked)
+                this.model.parameters = [];
+            else
+                this.model.parameters = str2num(get(this.view.hGUI.edP1, 'String'));
+            end
             isotermsIdList = this.view.getCheckedRows();
             tableIn = this.view.hGUI.tabIn;
             dataIn = get(tableIn, 'Data');

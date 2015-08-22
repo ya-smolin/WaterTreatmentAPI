@@ -77,10 +77,11 @@ classdef Model < handle
         size = length(Model.isotermTypes);
    end
    properties(SetAccess = public)
-        parameters;
+       
         lastIsoInd = -1; %crutch for Observable pattern
    end
    properties(SetObservable = true)
+       parameters;
        isoterms;
        data;
    end
@@ -93,11 +94,14 @@ classdef Model < handle
         function data.set(this, data)
             this.data = data;
         end
+        function parameters.set(this, p)
+            this.parameters = p;
+        end
         
         function calculate(this, isotermsID)
             for id = isotermsID
                 isotermType = this.isotermTypes{id};
-                isoterm = Isoterm(isotermType, this.data(:, 1), this.data(:, 2));
+                isoterm = Isoterm(isotermType, this.data(:, 1), this.data(:, 2), this.parameters);
                 if isempty(isoterm.isotermResult)
                     display(['result is empty for isoterm #' num2str(id)]);
                     continue;
