@@ -15,6 +15,8 @@ classdef Controller < handle
             set(view.hGUI.tabOut, 'CellEditCallback', @this.onTableEdit);
             set(view.hGUI.butRecalc, 'Callback', @this.onClickRecalculate);
             set(view.hGUI.cbP1, 'Callback', @this.onCheckP1);
+            set(view.hGUI.cbConfInt, 'Callback', @this.onCheckConfInt);
+            set(view.hGUI.edConfInt, 'Callback', @this.onFinishConfInt);
             %2,4DNP
             Cr = [
                 0.5
@@ -46,15 +48,47 @@ classdef Controller < handle
             this.model = model;
             this.view = view;
         end
+        function onFinishConfInt(this, edConfInt, event)
+            confAxes = this.view.hConfIntAxes;
+            isotermsId = this.view.getCheckedRows();
+            for id = isotermsId
+                hConfInt = confAxes(id, :);
+                if(ishghandle(hConfInt))
+                    delete(hConfInt);
+                end
+                this.view.hConfIntAxes(id, :) = this.view.plotConfInt(this.model.isoterms{id});
+            end
+        end
+        
+        function onCheckConfInt(this, cbConfInt, event)
+            isChecked =  get(this.view.hGUI.cbConfInt, 'Value');
+            chekedIsotermsID = this.view.getCheckedRows();
+            for isotermId = chekedIsotermsID
+                if(isChecked)
+                    isoterm = this.model.isoterms{isotermId};
+                    if ~isempty(isoterm)
+                        hConfPlot = this.view.plotConfInt(isoterm);
+                        this.view.hConfIntAxes(isotermId, :) = hConfPlot;
+                    end
+                else
+                    hConfLine = this.view.hConfIntAxes(isotermId, :);
+                    if(ishghandle(hConfLine)) 
+                        delete(hConfLine);
+                    end;
+                end
+            end
+        end
+        
         function onCheckP1(this, cbP1, event)
             isChecked =  get(cbP1, 'Value');
-             hEdP1 = this.view.hGUI.edP1;
+            hEdP1 = this.view.hGUI.edP1;
             if(isChecked)
                set(hEdP1, 'Visible', 'off');
             else
                set(hEdP1, 'Visible', 'on');
             end
         end
+        
         function onClickRecalculate(this, butRecalc, event)
             isChecked =  get(this.view.hGUI.cbP1, 'Value');
             if(isChecked)
@@ -88,16 +122,26 @@ classdef Controller < handle
             dataOut = get(tableOut, 'Data');
             
             if(col == IsotermTableRow.columnShow)
-                if(dataOut{row, col} == 1)
-                    if isempty(this.model.isoterms{row})
-%                         this.model.calculate(row);
-                    else
-                        hLine = this.view.axisHandles(row);
+                hLine = this.view.axisHandles(row);
+                hConf = this.view.hConfIntAxes(row, :);
+                isChecked =  get(this.view.hGUI.cbConfInt, 'Value');
+                
+                if(dataOut{row, col} == true)
+                    if ishandle(hLine)
                         set(hLine,'Visible','on');
+                        if ishandle(hConf(1)) && ishandle(hConf(2))
+                            set(hConf(1),'Visible','on');
+                            set(hConf(2),'Visible','on');
+                        end
                     end
                 else
-                    hLine = this.view.axisHandles(row);
-                    set(hLine,'Visible','off');
+                    if ishandle(hLine)
+                        set(hLine,'Visible','off');
+                        if ishandle(hConf(1)) && ishandle(hConf(2)) 
+                            set(hConf(1),'Visible','off');
+                            set(hConf(2),'Visible','off');
+                        end
+                    end
                 end
             end
         end

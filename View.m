@@ -8,8 +8,10 @@ classdef View < handle
     
     properties(SetObservable = true)
         tableRows;%?need
-        axisHandles = []
+        axisHandles = -ones(Model.size, 1);
+        hConfIntAxes = -ones(Model.size, 2);
         hDataAxes
+        
     end
     
     methods
@@ -55,13 +57,37 @@ classdef View < handle
                 if(~isempty(isoterm) && isprop(isoterm, 'isotermResult'))
                     h = plot(isoterm.isotermResult);
                     hLine = this.axisHandles(isotermId);
-                    if(hLine ~= 0) 
+                    if(ishghandle(hLine)) 
                         delete(hLine);
+                        hConf = this.hConfIntAxes(isotermId, :);
+                        if ishghandle(hConf)
+                            delete(hConf);
+                        end
                     end;
+                    
+                    isChecked =  get(this.hGUI.cbConfInt, 'Value');
+                    if(isChecked)
+                        hConfPlot = this.plotConfInt(isoterm);
+                        this.hConfIntAxes(isotermId, :) = hConfPlot;
+                    else
+                        hConfLine = this.hConfIntAxes(isotermId, :);
+                        if ishghandle(hConfLine) 
+                            delete(hConfLine);
+                        end;
+                    end
+                        
                     this.axisHandles(isotermId) = h;
                     legend('off');
                 end
                 
+        end
+        
+        function hConfPlot = plotConfInt(this, isoterm)
+            xConfInt = linspace(0, max(this.hModel.data(:,1)), 400);
+            confidenceLevel = str2double(get(this.hGUI.edConfInt,'String')) / 100;
+            yConfInt = predint(isoterm.isotermResult, xConfInt, confidenceLevel);
+            yConfInt(yConfInt<0) = 0;
+            hConfPlot = plot(xConfInt, yConfInt, '--c');
         end
         
         function updateData(this)
@@ -74,7 +100,8 @@ classdef View < handle
             Cr = data(:, 1);
             Ar = data(:, 2);
             this.hDataAxes = plot(Cr, Ar, 'greeno', 'LineWidth', 3);
-            this.axisHandles = zeros(this.hModel.size, 1);
+            this.axisHandles = -ones(this.hModel.size, 1);
+            this.hConfIntAxes = -ones(this.hModel.size, 2);
             hold on;
         end
         
@@ -120,8 +147,9 @@ classdef View < handle
             % load FIG file (its really a MAT-file)
             hFig = hgload('View.fig');
             handles = struct('fig',hFig);
-            tags = {'axes', 'checkConfInt', 'editConfInt', 'editConfInt', 'butRecalc', 'tabIn',...
-                'tabOut', 'butPlusRow', 'butMinusRow', 'butLoadData', 'menuTabIn', 'contextPaste', 'edP1', 'tvP1', 'cbP1'};
+            tags = {'axes', 'cbConfInt', 'edConfInt', 'butRecalc', 'tabIn',...
+                'tabOut', 'butPlusRow', 'butMinusRow', 'butLoadData',...
+                'menuTabIn', 'contextPaste', 'edP1', 'tvP1', 'cbP1'};
             % extract handles to GUI components
             for tag = tags
                  tag = char(tag);
