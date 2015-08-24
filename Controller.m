@@ -51,6 +51,19 @@ classdef Controller < handle
         function onFinishConfInt(this, edConfInt, event)
             confAxes = this.view.hConfIntAxes;
             isotermsId = this.view.getCheckedRows();
+            
+            isotermIdList = this.view.getAllCalculatedIsoterms();
+            tabOutDataRows = get(this.view.hGUI.tabOut, 'Data');
+            confInts = tabOutDataRows(:, IsotermTableRow.columnConfInt);
+            confidenceLevel = str2double(get(this.view.hGUI.edConfInt,'String')) / 100;
+            for id = isotermIdList
+                confInt = confint(this.model.isoterms{id}.isotermResult, confidenceLevel)';
+                confInt(confInt<0) = 0;
+                confInts{id} =  mat2str(round(confInt * 100) / 100);
+            end
+            tabOutDataRows(:, IsotermTableRow.columnConfInt) = confInts;
+            set(this.view.hGUI.tabOut, 'Data', tabOutDataRows)
+            
             for id = isotermsId
                 hConfInt = confAxes(id, :);
                 if(ishghandle(hConfInt))

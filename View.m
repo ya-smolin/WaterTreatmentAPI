@@ -34,6 +34,7 @@ classdef View < handle
         end
         
         function update(this, o, e)
+                confInt = str2double(get(this.hGUI.edConfInt, 'String')) / 100;
                 isotermId = this.hModel.lastIsoInd;
                 if(isotermId == -1)
                     this.formIsotermTable(this.hModel, this.hGUI.tabOut);
@@ -46,7 +47,7 @@ classdef View < handle
                 end   
                 table = this.hGUI.tabOut;
                 %table
-                tableRow = IsotermTableRow(isoterm);
+                tableRow = IsotermTableRow(isoterm, confInt);
                 this.tableRows{isotermId} = tableRow;
 
                 tableRowsData = get(table, 'Data');
@@ -110,6 +111,17 @@ classdef View < handle
             dataOut = get(tableOut, 'Data');
             isShownColumn = dataOut(:, IsotermTableRow.columnShow);
             isotermIdList = find(cell2mat(isShownColumn) == 1)';
+        end
+        
+        function isotermIdList = getAllCalculatedIsoterms(this)
+            isoterms = this.hModel.isoterms;
+            isotermIdList = [];
+            for i = 1:Model.size
+                isot = isoterms{i};
+                if(~isempty(isot) && ~isempty(isot.isotermResult)) 
+                    isotermIdList(end+1) = i;
+                end;
+            end
         end
     end
     

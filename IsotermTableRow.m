@@ -1,6 +1,7 @@
 classdef IsotermTableRow
     properties(Constant)
         columnShow = 4;
+        columnConfInt = 7;
         columnName =      {'name',    'formula',  'koef',   'show',     'rsquare', 'sse', 'koef range'};
         columnFormat =    {'char',    'char',     'char',   'logical',  'numeric', 'numeric', 'char'}
         columnEditable =  [false,   false,    false,  true,     false,   false,   false]
