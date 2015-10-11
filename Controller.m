@@ -11,7 +11,6 @@ classdef Controller < handle
             set(view.hGUI.contextPaste, 'Callback',{@Controller.copyExcel,view.hGUI.tabIn});
             set(view.hGUI.butPlusRow, 'Callback',{@Controller.onClickPlusRow,view.hGUI.tabIn});
             set(view.hGUI.butMinusRow, 'Callback',{@Controller.onClickMinusRow,view.hGUI.tabIn});
-            set(view.hGUI.butLoadData, 'Callback',@this.onClickLoadData);
             set(view.hGUI.tabOut, 'CellEditCallback', @this.onTableEdit);
             set(view.hGUI.butRecalc, 'Callback', @this.onClickRecalculate);
             set(view.hGUI.cbP1, 'Callback', @this.onCheckP1);
@@ -49,13 +48,14 @@ classdef Controller < handle
             this.view = view;
         end
         function onFinishConfInt(this, edConfInt, event)
-            confAxes = this.view.hConfIntAxes;
-            isotermsId = this.view.getCheckedRows();
+            tableRows = this.view.tableRows;
+%             isotermsId = this.view.getCheckedRows();
             
             isotermIdList = this.view.getAllCalculatedIsoterms();
             tabOutDataRows = get(this.view.hGUI.tabOut, 'Data');
             confInts = tabOutDataRows(:, IsotermTableRow.columnConfInt);
-            confidenceLevel = str2double(get(this.view.hGUI.edConfInt,'String')) / 100;
+            %this.view.hGUI.edConfInt
+            confidenceLevel = str2double(get(edConfInt,'String')) / 100;
             for id = isotermIdList
                 confInt = confint(this.model.isoterms{id}.isotermResult, confidenceLevel)';
                 confInt(confInt<0) = 0;
@@ -64,27 +64,30 @@ classdef Controller < handle
             tabOutDataRows(:, IsotermTableRow.columnConfInt) = confInts;
             set(this.view.hGUI.tabOut, 'Data', tabOutDataRows)
             
-            for id = isotermsId
-                hConfInt = confAxes(id, :);
+            isCheckedConfInt =  get(this.view.hGUI.cbConfInt, 'Value');
+            for id = isotermIdList
+                hConfInt = tableRows{id}.hConfIntAxes;
                 if(ishghandle(hConfInt))
                     delete(hConfInt);
                 end
-                this.view.hConfIntAxes(id, :) = this.view.plotConfInt(this.model.isoterms{id});
+                this.view.tableRows{id}.hConfIntAxes = this.view.plotConfInt(this.model.isoterms{id});
+                this.view.tableRows{id}.updatePlot(isCheckedConfInt);
             end
         end
         
         function onCheckConfInt(this, cbConfInt, event)
             isChecked =  get(this.view.hGUI.cbConfInt, 'Value');
+            
             chekedIsotermsID = this.view.getCheckedRows();
             for isotermId = chekedIsotermsID
                 if(isChecked)
                     isoterm = this.model.isoterms{isotermId};
                     if ~isempty(isoterm)
                         hConfPlot = this.view.plotConfInt(isoterm);
-                        this.view.hConfIntAxes(isotermId, :) = hConfPlot;
+                        this.view.tableRows{isotermId}.hConfIntAxes = hConfPlot;
                     end
                 else
-                    hConfLine = this.view.hConfIntAxes(isotermId, :);
+                    hConfLine =  this.view.tableRows{isotermId}.hConfIntAxes;
                     if(ishghandle(hConfLine)) 
                         delete(hConfLine);
                     end;
@@ -131,31 +134,14 @@ classdef Controller < handle
         function onTableEdit(this, table, eventData)
             row = eventData.Indices(1);
             col = eventData.Indices(2);
-            tableOut = this.view.hGUI.tabOut;
-            dataOut = get(tableOut, 'Data');
-            
+            dataOut = get(table, 'Data');
+           
             if(col == IsotermTableRow.columnShow)
-                hLine = this.view.axisHandles(row);
-                hConf = this.view.hConfIntAxes(row, :);
-                isChecked =  get(this.view.hGUI.cbConfInt, 'Value');
-                
-                if(dataOut{row, col} == true)
-                    if ishandle(hLine)
-                        set(hLine,'Visible','on');
-                        if ishandle(hConf(1)) && ishandle(hConf(2))
-                            set(hConf(1),'Visible','on');
-                            set(hConf(2),'Visible','on');
-                        end
-                    end
-                else
-                    if ishandle(hLine)
-                        set(hLine,'Visible','off');
-                        if ishandle(hConf(1)) && ishandle(hConf(2)) 
-                            set(hConf(1),'Visible','off');
-                            set(hConf(2),'Visible','off');
-                        end
-                    end
-                end
+                tableRow = this.view.tableRows{row};
+                tableRow.data{IsotermTableRow.columnShow} = dataOut{row, col}; 
+                isCheckedConfInt =  get(this.view.hGUI.cbConfInt, 'Value');
+                tableRow.updatePlot(isCheckedConfInt);
+                this.view.tableRows{row} = tableRow;
             end
         end
     end

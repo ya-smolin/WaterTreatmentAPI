@@ -3,15 +3,11 @@ classdef View < handle
     properties
         hGUI;
         hModel;
-        leg;
     end
     
     properties(SetObservable = true)
         tableRows;%?need
-        axisHandles = -ones(Model.size, 1);
-        hConfIntAxes = -ones(Model.size, 2);
         hDataAxes
-        
     end
     
     methods
@@ -34,7 +30,6 @@ classdef View < handle
         end
         
         function update(this, o, e)
-                confInt = str2double(get(this.hGUI.edConfInt, 'String')) / 100;
                 isotermId = this.hModel.lastIsoInd;
                 if(isotermId == -1)
                     this.formIsotermTable(this.hModel, this.hGUI.tabOut);
@@ -43,44 +38,31 @@ classdef View < handle
                 isoterm = this.hModel.isoterms{isotermId};
                 if(isempty(isoterm) || isempty(isoterm.isotermResult))
                     isoterm = this.hModel.isotermTypes{isotermId};
-    %                 delete(this.axisHandles(isotermId));
-                end   
-                table = this.hGUI.tabOut;
-                %table
+                end
+                
+                %clear plot
+                if(~isempty(this.tableRows{isotermId}))
+                    this.tableRows{isotermId}.clearPlots();
+                end
+                
+                confInt = str2double(get(this.hGUI.edConfInt, 'String')) / 100;
                 tableRow = IsotermTableRow(isoterm, confInt);
-                this.tableRows{isotermId} = tableRow;
-
+                %update table
+                table = this.hGUI.tabOut;
                 tableRowsData = get(table, 'Data');
                 tableRowsData(isotermId, :) = tableRow.data;
                 set(table, 'Data', tableRowsData);
             
-                %ploting
+                %update plot
                 if(~isempty(isoterm) && isprop(isoterm, 'isotermResult'))
-                    h = plot(isoterm.isotermResult);
-                    hLine = this.axisHandles(isotermId);
-                    if(ishghandle(hLine)) 
-                        delete(hLine);
-                        hConf = this.hConfIntAxes(isotermId, :);
-                        if ishghandle(hConf)
-                            delete(hConf);
-                        end
-                    end;
-                    
                     isChecked =  get(this.hGUI.cbConfInt, 'Value');
                     if(isChecked)
-                        hConfPlot = this.plotConfInt(isoterm);
-                        this.hConfIntAxes(isotermId, :) = hConfPlot;
-                    else
-                        hConfLine = this.hConfIntAxes(isotermId, :);
-                        if ishghandle(hConfLine) 
-                            delete(hConfLine);
-                        end;
+                        tableRow.hConfIntAxes = this.plotConfInt(isoterm);
                     end
-                        
-                    this.axisHandles(isotermId) = h;
+                    tableRow.axisHandles = plot(isoterm.isotermResult);
                     legend('off');
                 end
-                
+                this.tableRows{isotermId} = tableRow;
         end
         
         function hConfPlot = plotConfInt(this, isoterm)
@@ -101,8 +83,11 @@ classdef View < handle
             Cr = data(:, 1);
             Ar = data(:, 2);
             this.hDataAxes = plot(Cr, Ar, 'greeno', 'LineWidth', 3);
-            this.axisHandles = -ones(this.hModel.size, 1);
-            this.hConfIntAxes = -ones(this.hModel.size, 2);
+            for i = 1:this.hModel.size
+                    this.tableRows{i}.axisHandles = -1;
+                    this.tableRows{i}.hConfIntAxes = -ones(1, 2);
+            end
+          
             hold on;
         end
         

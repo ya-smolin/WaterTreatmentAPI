@@ -10,9 +10,61 @@ classdef IsotermTableRow
     end
     properties
         data;
+        id;
+        axisHandles = -1;
+        hConfIntAxes = -ones(1, 2);
     end
     
     methods
+        function updatePlot(this, isConfidencePlotTurnOn)
+             if(this.isPlotVisible())
+                    this.visibleAxes(true);
+                    if(isConfidencePlotTurnOn)
+                        this.visibleAxesConf(true);
+                    else
+                        this.visibleAxesConf(false);
+                    end
+                else
+                    this.visibleAxes(false);
+                    this.visibleAxesConf(false);
+             end
+        end
+        
+        function isVisible = isPlotVisible(this)
+            isVisible = this.data{IsotermTableRow.columnShow};
+        end
+        
+        function visibleAxes(this, turnOn)
+            if this.axisHandles ~= -1 && ishghandle(this.axisHandles)
+                    if(turnOn)
+                        set(this.axisHandles,'Visible','on');
+                    else
+                        set(this.axisHandles,'Visible','off');
+                    end
+            end
+        end
+        
+        function clearPlots(this)
+            plotLine = this.axisHandles;
+            if(plotLine ~= -1 && ishghandle(plotLine))
+                    delete(plotLine);
+            end;
+            plotLineConf = this.hConfIntAxes;
+            if sum(plotLineConf ~= -1 & ishghandle(plotLineConf)) == 2
+                    delete(plotLineConf);
+            end;
+        end
+        
+        function visibleAxesConf(this, turnOn)
+            if sum(this.hConfIntAxes ~= -1 & ishghandle(this.hConfIntAxes)) == 2
+                if(turnOn)
+                    set(this.hConfIntAxes,'Visible','on');
+                else
+                    set(this.hConfIntAxes,'Visible','off');
+                end
+            end
+        end
+            
         function this = IsotermTableRow(isoterm, confidenceLevel)
             if nargin == 1
                 confidenceLevel = IsotermTableRow.CONFIDENCE_LEVEL_DEFAULT;

@@ -1,8 +1,7 @@
 USABILITY
 ---------------
-1.refactor?
-conf int for coeficients
-legend for plot
+refactor if necessary. Add setter instead of events where it is appropriate
+add legend for plot to table
 different colors and appearence for plot lines
 sorting by r^2, RSME
 
