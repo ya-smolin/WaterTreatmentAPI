@@ -15,7 +15,7 @@ classdef View < handle
         function this = View(Model)
             %VIEW  a GUI representation of the signal model
             handles = View.initGUI();
-
+            
             this.tableRows = this.formIsotermTable(Model, handles.tabOut);
             isotermsListener = event.proplistener(Model, findprop(Model,'isoterms'), 'PostSet',...
                 @(o, e)this.update(o, e));
@@ -30,39 +30,39 @@ classdef View < handle
         end
         
         function update(this, o, e)
-                isotermId = this.hModel.lastIsoInd;
-                if(isotermId == -1)
-                    this.formIsotermTable(this.hModel, this.hGUI.tabOut);
-                    return;
-                end
-                isoterm = this.hModel.isoterms{isotermId};
-                if(isempty(isoterm) || isempty(isoterm.isotermResult))
-                    isoterm = this.hModel.isotermTypes{isotermId};
-                end
-                
-                %clear plot
-                if(~isempty(this.tableRows{isotermId}))
-                    this.tableRows{isotermId}.clearPlots();
-                end
-                
-                confInt = str2double(get(this.hGUI.edConfInt, 'String')) / 100;
-                tableRow = IsotermTableRow(isoterm, confInt);
-                %update table
-                table = this.hGUI.tabOut;
-                tableRowsData = get(table, 'Data');
-                tableRowsData(isotermId, :) = tableRow.data;
-                set(table, 'Data', tableRowsData);
+            isotermId = this.hModel.lastIsoInd;
+            if(isotermId == -1)
+                this.formIsotermTable(this.hModel, this.hGUI.tabOut);
+                return;
+            end
+            isoterm = this.hModel.isoterms{isotermId};
+            if(isempty(isoterm) || isempty(isoterm.isotermResult))
+                isoterm = this.hModel.isotermTypes{isotermId};
+            end
             
-                %update plot
-                if(~isempty(isoterm) && isprop(isoterm, 'isotermResult'))
-                    isChecked =  get(this.hGUI.cbConfInt, 'Value');
-                    if(isChecked)
-                        tableRow.hConfIntAxes = this.plotConfInt(isoterm);
-                    end
-                    tableRow.axisHandles = plot(isoterm.isotermResult);
-                    legend('off');
+            %clear plot
+            if(~isempty(this.tableRows{isotermId}))
+                this.tableRows{isotermId}.clearPlots();
+            end
+            
+            confInt = str2double(get(this.hGUI.edConfInt, 'String')) / 100;
+            tableRow = IsotermTableRow(isoterm, confInt);
+            %update table
+            table = this.hGUI.tabOut;
+            tableRowsData = get(table, 'Data');
+            tableRowsData(isotermId, :) = tableRow.data;
+            set(table, 'Data', tableRowsData);
+            
+            %update plot
+            if(~isempty(isoterm) && isprop(isoterm, 'isotermResult'))
+                isChecked =  get(this.hGUI.cbConfInt, 'Value');
+                if(isChecked)
+                    tableRow.hConfIntAxes = this.plotConfInt(isoterm);
                 end
-                this.tableRows{isotermId} = tableRow;
+                tableRow.axisHandles = plot(isoterm.isotermResult);
+                legend('off');
+            end
+            this.tableRows{isotermId} = tableRow;
         end
         
         function hConfPlot = plotConfInt(this, isoterm)
@@ -84,10 +84,10 @@ classdef View < handle
             Ar = data(:, 2);
             this.hDataAxes = plot(Cr, Ar, 'greeno', 'LineWidth', 3);
             for i = 1:this.hModel.size
-                    this.tableRows{i}.axisHandles = -1;
-                    this.tableRows{i}.hConfIntAxes = -ones(1, 2);
+                this.tableRows{i}.axisHandles = -1;
+                this.tableRows{i}.hConfIntAxes = -ones(1, 2);
             end
-          
+            
             hold on;
         end
         
@@ -103,7 +103,7 @@ classdef View < handle
             isotermIdList = [];
             for i = 1:Model.size
                 isot = isoterms{i};
-                if(~isempty(isot) && ~isempty(isot.isotermResult)) 
+                if(~isempty(isot) && ~isempty(isot.isotermResult))
                     isotermIdList(end+1) = i;
                 end;
             end
@@ -127,6 +127,24 @@ classdef View < handle
                 'ColumnName', IsotermTableRow.columnName, 'ColumnFormat', IsotermTableRow.columnFormat,...
                 'ColumnEditable', IsotermTableRow.columnEditable);
             
+            %              isotermTable.Position(3) = isotermTable.Extent(3);
+            %             isotermTable.Position(4) = isotermTable.Extent(4);
+            %
+            jscrollpane = findjobj(isotermTable);
+            jtable = jscrollpane.getViewport.getView;
+            
+            % Now turn the JIDE sorting on
+            jtable.setSortable(true);		% or: set(jtable,'Sortable','on');
+            %jtable.setAutoResort(true);
+            jtable.setPreserveSelectionsAfterSorting(true);
+            jtable.setMultiColumnSortable(true);
+            
+            View.fitTableWidth(isotermTable);
+           
+        end
+        
+        function fitTableWidth(table)
+            tableRowsData = get(table, 'Data');
             columnWidth = max(cellfun('length', tableRowsData));
             columnWidth(columnWidth < 6) = 0;
             columnWidth = columnWidth * 7;
@@ -136,10 +154,8 @@ classdef View < handle
                     columnWidthCell{i} = 'auto';
                 end
             end
-            set(isotermTable,'ColumnWidth',columnWidthCell);
+            set(table,'ColumnWidth',columnWidthCell);
         end
-        
-        
         function handles = initGUI()
             % load FIG file (its really a MAT-file)
             hFig = hgload('View.fig');
@@ -149,9 +165,9 @@ classdef View < handle
                 'menuTabIn', 'contextPaste', 'edP1', 'tvP1', 'cbP1'};
             % extract handles to GUI components
             for tag = tags
-                 tag = char(tag);
-                 hTag = findobj(hFig, 'tag', tag);
-                 handles.(tag) = hTag;
+                tag = char(tag);
+                hTag = findobj(hFig, 'tag', tag);
+                handles.(tag) = hTag;
             end
             
             set(handles.tabIn, 'uicontextmenu', handles.menuTabIn);

@@ -129,6 +129,7 @@ classdef Controller < handle
             set(table, 'Data', tableRowsData);
             
             this.model.calculate(isotermsIdList);
+            View.fitTableWidth(table);
         end
 
         function onTableEdit(this, table, eventData)

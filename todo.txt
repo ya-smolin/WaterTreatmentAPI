@@ -3,13 +3,11 @@ USABILITY
 refactor if necessary. Add setter instead of events where it is appropriate
 add legend for plot to table
 different colors and appearence for plot lines
-sorting by r^2, RSME
 
 help(manual) for isoterms
 saving plots
 plot only in interval from 0 to 1.1*max(Cr) and from 0 to 1.1*max(Ar)
 select all/none isoterm
-autowidth
 sse format
 =======================
 
