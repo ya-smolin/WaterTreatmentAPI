@@ -1,5 +1,6 @@
 classdef IsotermTableRow
     properties(Constant)
+        columnIsotermName = 1;
         columnShow = 4;
         columnConfInt = 7;
         columnName =      {'name',    'formula',  'koef',   'show',     'rsquare', 'sse', 'koef range'};
@@ -10,12 +11,20 @@ classdef IsotermTableRow
     end
     properties
         data;
-        id;
         axisHandles = -1;
         hConfIntAxes = -ones(1, 2);
     end
     
     methods
+        function initHoverLegend(this)
+            if(ishghandle(this.axisHandles))
+                hMenu = uicontextmenu;
+                hMenuItem = uimenu(hMenu, 'Label', this.data{IsotermTableRow.columnIsotermName}, 'HandleVisibility','callback');
+                set(this.axisHandles, 'uicontextmenu',hMenu);
+                 
+            end
+        end
+        
         function updatePlot(this, isConfidencePlotTurnOn)
              if(this.isPlotVisible())
                     this.visibleAxes(true);

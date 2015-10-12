@@ -60,6 +60,7 @@ classdef View < handle
                     tableRow.hConfIntAxes = this.plotConfInt(isoterm);
                 end
                 tableRow.axisHandles = plot(isoterm.isotermResult);
+                tableRow.initHoverLegend();
                 legend('off');
             end
             this.tableRows{isotermId} = tableRow;
@@ -127,23 +128,24 @@ classdef View < handle
                 'ColumnName', IsotermTableRow.columnName, 'ColumnFormat', IsotermTableRow.columnFormat,...
                 'ColumnEditable', IsotermTableRow.columnEditable);
             
-            %              isotermTable.Position(3) = isotermTable.Extent(3);
-            %             isotermTable.Position(4) = isotermTable.Extent(4);
-            %
             jscrollpane = findjobj(isotermTable);
             jtable = jscrollpane.getViewport.getView;
             
             % Now turn the JIDE sorting on
             jtable.setSortable(true);		% or: set(jtable,'Sortable','on');
-            %jtable.setAutoResort(true);
+            jtable.setAutoResort(true);
             jtable.setPreserveSelectionsAfterSorting(true);
             jtable.setMultiColumnSortable(true);
+            
             
             View.fitTableWidth(isotermTable);
            
         end
         
         function fitTableWidth(table)
+%             jscrollpane = findjobj(table);
+%             jtable = jscrollpane.getViewport.getView;
+%             jtable.setAutoResizeMode(jtable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
             tableRowsData = get(table, 'Data');
             columnWidth = max(cellfun('length', tableRowsData));
             columnWidth(columnWidth < 6) = 0;
@@ -156,13 +158,14 @@ classdef View < handle
             end
             set(table,'ColumnWidth',columnWidthCell);
         end
+        
         function handles = initGUI()
             % load FIG file (its really a MAT-file)
             hFig = hgload('View.fig');
             handles = struct('fig',hFig);
             tags = {'axes', 'cbConfInt', 'edConfInt', 'butRecalc', 'tabIn',...
                 'tabOut', 'butPlusRow', 'butMinusRow', 'butLoadData',...
-                'menuTabIn', 'contextPaste', 'edP1', 'tvP1', 'cbP1'};
+                'menuTabIn', 'contextPaste', 'edP1', 'tvP1', 'cbP1', 'barSave', 'barDataCursor', 'barZoomIn', 'barZoomOut'};
             % extract handles to GUI components
             for tag = tags
                 tag = char(tag);

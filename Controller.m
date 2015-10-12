@@ -16,6 +16,8 @@ classdef Controller < handle
             set(view.hGUI.cbP1, 'Callback', @this.onCheckP1);
             set(view.hGUI.cbConfInt, 'Callback', @this.onCheckConfInt);
             set(view.hGUI.edConfInt, 'Callback', @this.onFinishConfInt);
+            set(view.hGUI.barDataCursor, 'ClickedCallback',  @this.onClickBarDataCursor);
+            set(view.hGUI.barSave, 'ClickedCallback',  @this.onClickBarSave);
             %2,4DNP
             Cr = [
                 0.5
@@ -46,6 +48,13 @@ classdef Controller < handle
             set(view.hGUI.tabIn, 'data', data);
             this.model = model;
             this.view = view;
+        end
+         function onClickBarSave(this, obj, event)
+            [filename, ext, user_canceled] = imputfile;
+            saveas(this.view.hGUI.axes, filename,ext); %save figure
+        end
+        function onClickBarDataCursor(this, obj, event)
+             datacursormode(this.view.hGUI.fig);
         end
         function onFinishConfInt(this, edConfInt, event)
             tableRows = this.view.tableRows;
