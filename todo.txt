@@ -1,7 +1,9 @@
 USABILITY
 ---------------
-isoterm on bigger interval then you can see(when using pan)
 refactor if necessary. Add setter instead of events where it is appropriate
+
+add zoomIn zoomOut and pan
+isoterm on bigger interval then you can see(when using pan)
 different colors and appearence for plot lines
 
 help(manual) for isoterms
