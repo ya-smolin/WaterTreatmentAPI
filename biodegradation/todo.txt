@@ -1,0 +1,3 @@
+*Check my method. use fsolve t = V/(k1*X*k3)*(k2*k3*log(c)+k3*c+c^2/2) + const
+*dimensionless not work. why? Is it really needed there?
+*More correct numerical integral(see C_cal) and derivative(see R_cal)

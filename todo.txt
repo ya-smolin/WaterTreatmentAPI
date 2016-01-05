@@ -28,3 +28,7 @@ searching start point another way
 play with Maguart method, bounds, data preprocessing
 add new isoterms
 =======================
+www
+*dimensionless
+*rewrite without anonimous function and debug
+
