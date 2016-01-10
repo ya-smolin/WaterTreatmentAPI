@@ -6,14 +6,14 @@ function res = C_cal(k, T)
         if(i == 1)
             res(1)=C(1);
         else
-            res(i)= res(i-1)-(F(k, i)+F(k, i-1))./2 .* (T(i)-T(i-1));
+            %TODO: review if I correctly take integral of composite fun
+            res(i)= res(i-1)+(F(k, i)+F(k, i-1))./2 .* (T(i)-T(i-1));
         end
     end
 end
 
 function res = F(k, i)
-global X C v
-%res = k(3)*k(1)*X(i)*C(i)/(v*(k(3)*C(i)+k(3)*k(2)+C(i).^2));
-res = k(1)*X(i)*C(i)/(v*(C(i)+k(2)+C(i).^2/k(3))); %Haldane
-% res = k(1)*X(i)*C(i)/(v*(C(i)+k(2))); %Mono
+    global ssv C v
+    res = -k(1)*ssv*C(i)/(v*(C(i)+k(2)+C(i).^2/k(3))); %Haldane
+    % res = k(1)*X(i)*C(i)/(v*(C(i)+k(2))); %Mono
 end

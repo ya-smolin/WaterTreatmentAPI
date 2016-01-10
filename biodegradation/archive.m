@@ -24,3 +24,48 @@
 % T=A(1,:);
 % C=A(2,:);
 % X=A(3,:);
+
+
+generSize = 20;
+populSize = 200;
+optionsGA=gaoptimset();
+optionsGA = gaoptimset(optionsGA,'PopInitRange',  [min(lb); max(ub)],'PopulationSize', populSize,...
+    'Generations', generSize,'Display', 'off');
+
+ nvars=2;
+ main_fun_R = @(k)sum((R_cal(k, C) - R_exp).^2);
+ Rk0 = ga(main_fun_R, nvars,[],[],[],[],lb,ub,[],[],optionsGA);
+ 
+ %     if(dimensionless)
+%         X = X / max(C); %[0 .. 1]
+%         T = T / max(T); %[0 .. 1]
+%         C = C / max(C); %[0 .. 1]
+%         v = v / max(C); %litres
+%     end
+
+%     if(dimensionless)
+%         CK = CK  * max(data{testNum}.C);
+%         X = X * max(data{testNum}.C); %[0 .. 1]
+%         T = T * max(data{testNum}.T); %[0 .. 1]
+%         C = C * max(data{testNum}.C); %[0 .. 1]
+%         v = v * max(data{testNum}.C); %litres
+%     end
+
+%     [x0 errfun] = patternsearch(main_fun_C, x0, [],[],[],[],lb,ub, [], psoptimset('Display', 'iter', 'MaxIter', 1000))
+%     [x0 errfun] =  particleswarm(main_fun_C,nvars,lb,ub,optimoptions(@particleswarm, 'Display', 'iter', 'StallIterLimit', 1000))
+%     Cproblem = createOptimProblem('lsqcurvefit', 'x0', x0(1:nvars),'objective', @C_runge,...
+%         'lb',lb(1:nvars),'ub',ub(1:nvars),'xdata', T, 'ydata', C);
+%     [CK,errormulti] = run(ms,Cproblem,200) %disp
+
+
+%     size=length(T);
+%     y=zeros(1,size);
+%     for i=1:size
+%         if(i == 1)
+%             y(1)=C(1);
+%         else
+%             %Real runge kutta
+%             y(i) = y(i-1) + F(y(i-1), k, ssv, v) * (T(i)-T(i-1));
+% 
+%         end
+%     end
