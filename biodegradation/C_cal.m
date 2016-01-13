@@ -1,5 +1,8 @@
-function res = C_cal(k, T)
-    global C
+function res = C_runge(k, T, C, ssv, v)
+    function y = F(k, i)
+        y = -k(1)*ssv*C(i)/(v*(C(i)+k(2)+C(i).^2/k(3))); %Haldane
+        % res = k(1)*X(i)*C(i)/(v*(C(i)+k(2))); %Mono
+    end
     size=length(T);
     res=zeros(1,size);
     for i=1:size
@@ -12,8 +15,3 @@ function res = C_cal(k, T)
     end
 end
 
-function res = F(k, i)
-    global ssv C v
-    res = -k(1)*ssv*C(i)/(v*(C(i)+k(2)+C(i).^2/k(3))); %Haldane
-    % res = k(1)*X(i)*C(i)/(v*(C(i)+k(2))); %Mono
-end

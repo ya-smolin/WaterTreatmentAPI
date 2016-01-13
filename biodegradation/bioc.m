@@ -3,7 +3,7 @@ close all;
 data = loadData();
 
 m = length(data);
-m=1;
+% m=6;
 for testNum = 1:m
     X = data{testNum}.X;  
     T = data{testNum}.T;
@@ -18,24 +18,26 @@ for testNum = 1:m
     ub(1:nvars) = max(C);
     x0 = (ub - lb)./2;
     optionsGA = gaoptimset('PopInitRange',  [min(lb); max(ub)], 'Display', 'iter');
-    optionsGA.PopulationSize = 8;
-    optionsGA.Generations = 20;
+    optionsGA.PopulationSize = 100;
+    optionsGA.Generations = 30;
     
-
-    C_cal = @(k, T) C_runge(k, T, C0, ssv, v);
-    main_fun_C = @(k)sum((C_cal(k, T) - C).^2);
-%     [x0 errfun] = ga(main_fun_C, nvars,[],[],[],[],lb,ub,[],[],optionsGA)
+   
+    C_fun = @(k, T) C_cal(k, T, C, ssv, v);
+%     C_fun = @(k, T) C_runge(k, T, C0, ssv, v);
+    main_fun_C = @(k)sum((C_fun(k, T) - C).^2);
+    A= [0 1 -1]; b = 0;
+    [x0 errfun] = ga(main_fun_C, nvars,A,b,[],[],lb,ub,[],[],optionsGA)
     Cproblem = createOptimProblem('fmincon', 'x0', x0,'objective', main_fun_C,...
-        'lb',lb,'ub',ub);
+        'Aineq', A, 'bineq', b, 'lb',lb,'ub',ub);
     [kC,errormulti] = run(GlobalSearch,Cproblem)
     data{testNum}.kC = kC;
  
     %%%%%%%%%%%%PLOT%%%%%%%%%%%%%%%%%%%%%%
     subplot(m, 1, testNum);
     hold on;
-    C_interp = @(t)interp1(T, C_cal(kC, T), t, 'spline');
+    C_interp = @(t)interp1(T, C_fun(kC, T), t, 'linear');
     fplot(@(t)C_interp(t), [0  max(T)]);
-    plot(T, C_cal(kC, T), 'bo', 'LineWidth', 2);
+    plot(T, C_fun(kC, T), 'bo', 'LineWidth', 2);
     axis([0,inf,0,inf]);
     xlabel('t');
     ylabel('C');
