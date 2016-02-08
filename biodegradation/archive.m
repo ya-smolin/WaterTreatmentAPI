@@ -1,3 +1,7 @@
+% The inhibitor constant Ki is the concentration of inhibitor which is required to decrease the maximal rate of the reaction to half of the uninhibited value, in the presence of a low substrate concentration.
+
+% Therefore, the lower the Ki the lower the concentration of inhibitor needed to lower the rate.
+
 %#########################ANONYMOUS FUNCTION RECURSION####################
 % iif = @(varargin) varargin{2*find([varargin{1:2:end}], 1, 'first')}();
 % F = @(k, i) k(3)*k(1)*X(i)*C(i)/(v*(k(3)*C(i)+k(3)*k(2)+C(i).^2));

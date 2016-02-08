@@ -1,6 +1,7 @@
-function res = C_runge(k, T, C, ssv, v)
+function res = C_cal(k, T, C, ssv, v)
     function y = F(k, i)
-        y = -k(1)*ssv*C(i)/(v*(C(i)+k(2)+C(i).^2/k(3))); %Haldane
+        global kC
+        y = -k(1)*ssv*C(i)/(v*(C(i)+kC(1)+C(i).^2/kC(2))); %Haldane
         % res = k(1)*X(i)*C(i)/(v*(C(i)+k(2))); %Mono
     end
     size=length(T);
