@@ -1,9 +1,15 @@
 function calculateHaldaneKoef()
+
 data = loadData();
-
-testsSize = 1; length(data);
-
+testsSize = length(data);
+OUTPUT_MODE = false;
+if OUTPUT_MODE == true
+    load data data;
+end
 for testNum = 1:testsSize
+    if OUTPUT_MODE == true
+        break;
+    end
     X = data{testNum}.X;
     T = data{testNum}.T;
     C = data{testNum}.C;
@@ -15,58 +21,77 @@ for testNum = 1:testsSize
     lb(1:3) = 1e-10;
     ub(1:3) = max(C);
     A=[]; b = [];
-    k1 = fitParameters(funK, C, lb, ub, A, b);
-    data{testNum}.k1=k1;
-    disp(k1);
+    kFirst = fitParameters(funK, C, lb, ub, A, b);
+    data{testNum}.kFirst=kFirst;
+    disp(kFirst);
     
     frequency = 455;
     T_ext = linspace(0, max(T), frequency);
-    C_ext = C_runge(k1, T_ext, C0, ssv, v, false);
+    C_ext = C_runge(kFirst, T_ext, C0, ssv, v, false);
     R = -diff(C_ext(1:2:end))./diff(T_ext(1:2:end));
     T = T_ext(2:2:end);
     C = C_ext(2:2:end);
     R_exp = R ./ max(R);
-    R_cal = @(k, C)C.*(1+2*sqrt(k(1)/k(2)))./(k(1)+C+C.^2/k(2));%looped
-    k2 = fitParameters(@(k)R_cal(k, C), R_exp, lb(1:2), ub(1:2), A, b);
-    data{testNum}.k2=k2;
-    disp(k2);
+    kSecond = fitParameters(@(k)R_cal(k, C), R_exp, lb(1:2), ub(1:2), A, b);
+    data{testNum}.R_exp = R_exp;
+    data{testNum}.C_exp = C;
+    disp(kSecond);
     
-    funK = @(k)C_runge(k, T, C0, ssv, v, false, k2(1), k2(2));
-    k3 = fitParameters(funK, C, lb(1), ub(1), [], []);
-    data{testNum}.k3=k3;
-    disp(k3);
+    funK = @(k)C_runge(k, T, C0, ssv, v, false, kSecond(1), kSecond(2));
+    kMax = fitParameters(funK, C, lb(1), ub(1), [], []);
+    data{testNum}.kSecond = [kMax kSecond];
+    disp(kMax);
 end
-
-save data data;
+if OUTPUT_MODE == false
+    save data data;
+end
 plotData(data);
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function plotData(data)
     figure();
-    testsSize = 1;length(data);
+    testsSize = length(data);
     for testNum = 1:testsSize
-        k = [data{testNum}.k3 data{testNum}.k2];
-        X = data{testNum}.X;
-        T = data{testNum}.T;
-        C = data{testNum}.C;
-        v = data{testNum}.v;
-        ssv = mean(X);
-        C0 = C(1);
-
-        funK = @(T)C_runge(k, T, C0, ssv, v, true);
-        subplot(testsSize, 1, testNum);
-        hold on;
-        C_interp = @(t)interp1(T, funK(T), t, 'linear');
-        fplot(@(t)C_interp(t), [0  max(T)]);
-        plot(T, funK(T), 'bo', 'LineWidth', 2);
-        axis([0,inf,0,inf]);
-        xlabel('t');
-        ylabel('C');
-        title(['[' data{testNum}.title '] K_{max}=' num2str(k(1)) ' K_s=' num2str(k(2)) ' K_I=' num2str(k(3))]);
-        plot(T, C, 'rx', 'LineWidth', 2);
+        for i = 1:3
+            X = data{testNum}.X;
+            T = data{testNum}.T;
+            C = data{testNum}.C;
+            v = data{testNum}.v;
+            ssv = mean(X);
+            C0 = C(1);
+            
+            if i == 1
+                k = data{testNum}.kFirst;
+            else
+                k = data{testNum}.kSecond;
+            end
+            
+            subplot(testsSize, 3, (testNum - 1) * 3 + i);   
+            if i == 2
+                fplot(@(C)R_cal(k(2:3), C), [0  1.1*max(C)]);
+                hold on;
+                plot(C, R_cal(k(2:3), C), 'bo', 'LineWidth', 2);
+                axis([0,inf,0,inf]);
+                xlabel('C');
+                ylabel('R');
+                plot(data{testNum}.C_exp, data{testNum}.R_exp, 'rx', 'LineWidth', 2);
+                 title(['[' data{testNum}.title '] K_s=' num2str(k(2)) ' K_I=' num2str(k(3))]);
+            else
+                funK = @(T)C_runge(k, T, C0, ssv, v, true);
+                hold on;
+                C_interp = @(t)interp1(T, funK(T), t, 'linear');
+                fplot(@(t)C_interp(t), [0  max(T)]);
+                plot(T, funK(T), 'bo', 'LineWidth', 2);
+                axis([0,inf,0,inf]);
+                xlabel('t');
+                ylabel('C');
+                title(['[' data{testNum}.title '] K_{max}=' num2str(k(1)) ' K_s=' num2str(k(2)) ' K_I=' num2str(k(3))]);
+                plot(T, C, 'rx', 'LineWidth', 2);
+            end
+            
+        end
     end
 end
 
@@ -129,6 +154,10 @@ function y = C_trap(k, T, C, ssv, v)
         function y = F(k, i)
             y = -k(1)*ssv*C(i)/(v*(C(i)+k(2)+C(i).^2/k(3)));
         end
+end
+
+function y = R_cal(k, C)
+y = C.*(1+2*sqrt(k(1)/k(2)))./(k(1)+C+C.^2/k(2));
 end
 
 
