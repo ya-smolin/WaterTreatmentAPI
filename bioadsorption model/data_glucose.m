@@ -1,4 +1,4 @@
-%м год
+%mesuares: m h mg
 clear;
 global l h M; 
 global t teta N;
@@ -6,9 +6,9 @@ global C A Psi;
 global k n;
 global u ks Y kc;
 global beta v a por ro;
-global C0 psi_0;
+global C0 psi_0 Cin;
 
-par=10^4;%на 10000 год
+par=1;
 parm=1;
 
 l=0.3/parm; h=0.01/parm;
@@ -30,12 +30,13 @@ kc=0.003*par;
 
 beta=158.4*par;
 v=7.2*par/parm;
-a=beta/v;
+a=@(t)beta/v;
 por=0.6;
 ro=352;
 
 psi_0 = 0.0375;
 C0=80;
+Cin=@(t)C0;
 
 C(:,1) = 0;
 A(:,1) = 0;
