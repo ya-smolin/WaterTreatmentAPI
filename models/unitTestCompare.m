@@ -61,6 +61,7 @@
 %pathGen = genpath('C:\WORKSPACE\adsorption book\');
 %addpath(pathGen);
 
+clear;
 % DECLARE SOME GLOBAL VARIABLES
 	global A C n u	
 	global s
@@ -108,20 +109,24 @@
     
     disp ( ['AB are equal? ' equalEps(Amy, A) ' ' equalEps(Bmy, B)]);
     
-    w				= RDW(n,n0,n1,al-1,be,u,dif);
-    wMy=lPs.rdw(al, be);
-    wRight=lPs.rdw00slow();
-    testf = @(x)x.^2;
-    weight = @(x, al, be)(1-x).^al .* x.^be;
-    int0 = w'*(weight(lPs.nodes, al, be).*testf(lPs.nodes));
-    int1 = wMy'*testf(lPs.nodes);
-    int2 = integral( @(x)yP.weightF(x).*testf(x), 0, 1);
-    
-    disp ( ['int is as expected? ' num2str([int0 int1 int2]) ' ' equalEps(int1, 1/3)]);
-    
-    disp ( ['w are equal? ' equalEps(wRight, wMy)]);
+    %banned because of it doesn't work, probably bugs in code
+    %w	= RDW(n,n0,n1,al-1,be,u,dif);
     
     yP.unitTestYita()
+    testf = @(x)x.^2;
+    weight = @(x, al, be)(1-x).^al .* x.^be;
+    %TODO: investigate why we have different behavior of w and wMy
+    al=0; be=0;
+    w=lPs.rdw(al, be);
+    wMy=lPs.rdwMy(al, be);
+    disp (['w are equal? ' equalEps(w, wMy)]);
+   
+    int1 = dot(w,weight(lPs.nodes, al, be).*testf(lPs.nodes));
+    int2 = dot(wMy,testf(lPs.nodes));
+    int3 = integral(@(x)yP.weightF(x).*testf(x), 0, 1);
+    
+    disp (['int is as expected? ' num2str([int1 int2 int3])]);
+    
     
 	for i=1:nt
 		C(i,:)	= 4.*u(i).*B(i,:) + 2.*(s+1).*A(i,:);
@@ -140,8 +145,8 @@
     
 % CALCULATE THE FRACTIONAL UPTAKE
 	for i=1:length(tout)
-		fractional_uptake(i) 	= ( dot(wMy, yout(i,:)) - yi )/(yb - yi);
-        fractional_uptake1(i) 	= ( dot(wRight, yout(i,:)) - yi )/(yb - yi);
+		fractional_uptake(i) 	= ( dot(w, yout(i,:)) - yi )/(yb - yi);
+        fractional_uptakeMy(i) 	= ( dot(wMy, yout(i,:)) - yi )/(yb - yi);
 	end
 
 %-----------
@@ -151,7 +156,7 @@
 	subplot(1,2,1)
    plot(tout,fractional_uptake,'k-');
    hold on
-   plot(tout,fractional_uptake1,'r-');
+   plot(tout,fractional_uptakeMy,'ro');
    xlabel('time');
    ylabel('Fractional uptake');grid;
    title('FRACTIONAL UPTAKE vs TIME');

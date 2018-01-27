@@ -94,21 +94,30 @@ classdef YacobiPolynomial
                 /(gamma(N+obj.al+obj.be+1)*gamma(i+obj.be+1));
         end
         
-        %TODO: CRITICAL Why it is not right?? reconsider N
-        function yita2 = yNrecursive(obj, i)
+        function yita2 = yNrecursive(obj, k)
             N = obj.n;
-            y = zeros(i,1);
+            y = zeros(k+1,1);
             y(1) = 1;
-            for i = 2:i
-                %y(i)=(N - i + 1)/i*(N+i+al+be)/(i+be)*y(i-1);
-                y(i)=(N-i+1)*(N+i+obj.al+obj.be)/(i*(i+obj.be))*y(i-1);
+            for i = 1:k
+                y(i+1) =(N-i+1)*(N+i+obj.al+obj.be)/(i*(i+obj.be))*y(i);
             end
-            yita2 = y(i);
+            yita2 = y(k+1);
         end
         
         function yita3 = yNparams(obj, i)
              N = obj.n;
              yita3 = obj.p(N-i+1)*(-1)^(N-i);
+        end
+        
+        function ret = cn(obj)
+            yita = yNparams(obj, obj.n);
+            ret = Cn(obj)./yita.^2;
+        end
+        
+        function ret = Cn(obj)
+            N = obj.n;
+            ret = gamma(obj.be+1).^2*factorial(N)*gamma(N + obj.al + 1)...
+                /(gamma(N+obj.be+1)*gamma(N+obj.al+obj.be+1)*(2*N+obj.al+obj.be+1));
         end
         
         function unitTestYita(obj)

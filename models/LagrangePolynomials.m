@@ -151,43 +151,31 @@ classdef LagrangePolynomials
             end
         end
         
-        %TODO: CRITICAL why is not the same as mine and why it useless for
-        %integral of simple function as x^2???
         function w = rdw(obj,al,be)
-            d=pNder(obj);
-            w = zeros(1,obj.n);
             n0 = (obj.nodes(1) == 0);
-            n1 = (obj.nodes(end)== 1);
+            n1 = (obj.nodes(end) == 1);
             N = obj.n - n0 - n1; %interior points
-            if n0==0 && n1==1
-                mult = (2*N + al + be +2)*cn(obj, N, al+1, be);
-                w = mult./(obj.nodes.*d(1,:)'.^2);
+            
+            yP = YacobiPolynomial(N, al+n1, be+n0);
+            nnodes = [yP.u; 1];
+            nLP = LagrangePolynomials(nnodes);
+            d = nLP.pNder();
+            x = nLP.nodes;
+            w = (2*N + al + be + 1 + n0 + n1)*yP.cn()./(x.^n1.*(1-x).^n0.*d(1,:)'.^2);
+            if n1==1
                 w(obj.n)= w(obj.n)/(1+al);
-            elseif n0==1 && n1==0
-                w = 1./((1-obj.nodes).*d(1,:)'.^2);
+            end
+            if n0==1
                 w(1) = w(1)/(1+be);
-            elseif n0==1 && n1==1
-                w = 1./d(1,:)'.^2;
-                w(1) = w(1)/(1+be);
-                w(obj.n) = w(obj.n)/(1+al);
             end
             w = w./sum(w);
         end
         
-        function cnR = cn(obj, N, al, be)
-            yP = YacobiPolynomial(N, al, be);
-            yita = yP.yNparams(N);
-            cnR = Cn(obj, N, al, be)./yita.^2;
-        end
-        
-        function CnR = Cn(obj, N, al, be)
-            CnR = gamma(be+1).^2*factorial(N)*gamma(N+al + 1)/(gamma(N+be+1)*gamma(N+al+be+1)*(2*N+al+be+1));
-        end
-        
-        function w = rdw00slow(obj)
+        function w = rdwMy(obj, al, be)
             w = zeros(obj.n,1);
+            wf = @(x)(1-x).^al .* x.^be;
             for i = 1:obj.n
-                w(i) = integral(@(x)val(obj, i, x), 0, 1);
+                w(i) = integral(@(x)wf(x).*val(obj, i, x), 0, 1);
             end
         end
         
@@ -195,7 +183,7 @@ classdef LagrangePolynomials
             pass = true;
             testf = @(x)x.^2;
             testF01 = 1/3;
-          
+            
             w1=rdw(obj,0,0);
             int1 = w1'*testf(obj.nodes);
             
