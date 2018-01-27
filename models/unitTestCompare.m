@@ -109,14 +109,19 @@
     disp ( ['AB are equal? ' equalEps(Amy, A) ' ' equalEps(Bmy, B)]);
     
     w				= RDW(n,n0,n1,al-1,be,u,dif);
-    wMy=lPs.rdw(al-1, be-0.5);
+    wMy=lPs.rdw(al, be);
     wRight=lPs.rdw00slow();
     testf = @(x)x.^2;
-    int1 = wRight'*testf(lPs.nodes);
-    %0.0635
-    disp ( ['int is as expected? ' equalEps(int1, 1/3)]);
+    weight = @(x, al, be)(1-x).^al .* x.^be;
+    int0 = w'*(weight(lPs.nodes, al, be).*testf(lPs.nodes));
+    int1 = wMy'*testf(lPs.nodes);
+    int2 = integral( @(x)yP.weightF(x).*testf(x), 0, 1);
     
-    disp ( ['w are equal? ' equalEps(w, wMy)]);
+    disp ( ['int is as expected? ' num2str([int0 int1 int2]) ' ' equalEps(int1, 1/3)]);
+    
+    disp ( ['w are equal? ' equalEps(wRight, wMy)]);
+    
+    yP.unitTestYita()
     
 	for i=1:nt
 		C(i,:)	= 4.*u(i).*B(i,:) + 2.*(s+1).*A(i,:);
@@ -135,7 +140,7 @@
     
 % CALCULATE THE FRACTIONAL UPTAKE
 	for i=1:length(tout)
-		fractional_uptake(i) 	= ( dot(w, yout(i,:)) - yi )/(yb - yi);
+		fractional_uptake(i) 	= ( dot(wMy, yout(i,:)) - yi )/(yb - yi);
         fractional_uptake1(i) 	= ( dot(wRight, yout(i,:)) - yi )/(yb - yi);
 	end
 
@@ -160,15 +165,3 @@
    xlabel('Intra-particle distance');
    ylabel('Intra-particle concentration');
    title('CONCENTRATION PROFILES');
-
-   function isEqualStr = equalEps(a, b, epsilon)
-       if nargin == 2
-           epsilon = eps('single');
-       end
-       isEqual = sum(sum(abs((a - b) ./ max(a, b)))) < epsilon;
-       if(isEqual)
-           isEqualStr = 'Yes';
-       else
-           isEqualStr = 'No';
-       end
-   end

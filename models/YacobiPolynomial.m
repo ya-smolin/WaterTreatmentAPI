@@ -4,7 +4,7 @@ classdef YacobiPolynomial
     % in the interval [0,1]. In literature they called SHIFTED due to the
     % transformation x=2*u-1 on the domains x[-1, 1] to domains u[0, 1].
     properties
-        al, be %weight function  W(x)=x^be*(1-x)^al params, -1 < al, be < 1
+        al, be %weight function  W(x)=x^al(1-x)^be params, -1 < al, be < 1
         n      %polynomial degree == roots num
         p      %polynomial params p'*[1, x, x^2, ..., x^n]
         u      %polynomial roots in interval [0, 1]
@@ -88,6 +88,40 @@ classdef YacobiPolynomial
             v = polyval(pF, x);
         end
         
+        function yita1 = yNdirect(obj, i)
+            N = obj.n;
+            yita1 = nchoosek(N,i)*gamma(N+i+obj.al+obj.be+1)*gamma(obj.be+1)...
+                /(gamma(N+obj.al+obj.be+1)*gamma(i+obj.be+1));
+        end
+        
+        %TODO: CRITICAL Why it is not right?? reconsider N
+        function yita2 = yNrecursive(obj, i)
+            N = obj.n;
+            y = zeros(i,1);
+            y(1) = 1;
+            for i = 2:i
+                %y(i)=(N - i + 1)/i*(N+i+al+be)/(i+be)*y(i-1);
+                y(i)=(N-i+1)*(N+i+obj.al+obj.be)/(i*(i+obj.be))*y(i-1);
+            end
+            yita2 = y(i);
+        end
+        
+        function yita3 = yNparams(obj, i)
+             N = obj.n;
+             yita3 = obj.p(N-i+1)*(-1)^(N-i);
+        end
+        
+        function unitTestYita(obj)
+            i = obj.n;
+            yita1 = yNdirect(obj, i);
+            yita2 = yNrecursive(obj, i);
+            yita3 = yNparams(obj, i);
+            
+            [~, isSame1]=equalEps(yita1, yita2);
+            [~, isSame2]=equalEps(yita2, yita3);
+            disp(['are yNdirect, yNrecursive and yNparams the same? ', num2str(isSame1 && isSame2)]);
+            disp(num2str([yita1, yita2, yita3]));
+        end
     end
     
 end

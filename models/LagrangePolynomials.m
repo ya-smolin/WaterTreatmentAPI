@@ -151,27 +151,39 @@ classdef LagrangePolynomials
             end
         end
         
+        %TODO: CRITICAL why is not the same as mine and why it useless for
+        %integral of simple function as x^2???
         function w = rdw(obj,al,be)
             d=pNder(obj);
-            w		= zeros(1,obj.n);
+            w = zeros(1,obj.n);
             n0 = (obj.nodes(1) == 0);
             n1 = (obj.nodes(end)== 1);
+            N = obj.n - n0 - n1; %interior points
             if n0==0 && n1==1
-                w = 1./obj.nodes./d(1,:)'.^2;
+                mult = (2*N + al + be +2)*cn(obj, N, al+1, be);
+                w = mult./(obj.nodes.*d(1,:)'.^2);
                 w(obj.n)= w(obj.n)/(1+al);
+            elseif n0==1 && n1==0
+                w = 1./((1-obj.nodes).*d(1,:)'.^2);
+                w(1) = w(1)/(1+be);
+            elseif n0==1 && n1==1
+                w = 1./d(1,:)'.^2;
+                w(1) = w(1)/(1+be);
+                w(obj.n) = w(obj.n)/(1+al);
             end
-            if n0==1 && n1==0
-                w		= 1./(1-obj.nodes)./d(1,:)'.^2;
-                w(1)	= w(1)/(1+be);
-            end
-            if n0==1 && n1==1
-                w		= 1./d(1,:)'.^2;
-                w(1)	= w(1)/(1+be);
-                w(obj.n)	= w(obj.n)/(1+al);
-            end
-            w	= w./sum(w);
+            w = w./sum(w);
         end
-
+        
+        function cnR = cn(obj, N, al, be)
+            yP = YacobiPolynomial(N, al, be);
+            yita = yP.yNparams(N);
+            cnR = Cn(obj, N, al, be)./yita.^2;
+        end
+        
+        function CnR = Cn(obj, N, al, be)
+            CnR = gamma(be+1).^2*factorial(N)*gamma(N+al + 1)/(gamma(N+be+1)*gamma(N+al+be+1)*(2*N+al+be+1));
+        end
+        
         function w = rdw00slow(obj)
             w = zeros(obj.n,1);
             for i = 1:obj.n
