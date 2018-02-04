@@ -5,7 +5,6 @@ global n s Ds Ed Dg
 global H M N tau tGrid rGrid
 global q Ss x1
 %% DONE!: check this result with MATLAB build solver. It works!
-Ss = @(t)t.^2;
 al = 0;
 be = 2;
 x1 = 1;
@@ -32,6 +31,8 @@ Ed = Ds*Dg*tau/R^2; %check
 
 q = zeros(H, M, N); %solution
 q(:, 1, :) = 0; %(26)
+%Ss = @(t)t.^2;
+Ss=zeros(x1, N);
 
 % M-1 roots of Jacobi Polinomial
 rootsNum = M-2; %-1 for each boundary condition
@@ -56,7 +57,7 @@ iter=1e4;
 options=optimoptions('fsolve','Display', 'final','Algorithm','levenberg-marquardt');
 
 global rDia tDia rSize tSize eq1Size
-rDia=1:M-1;
+rDia=1:M;
 tDia = 2:N;
 rSize = length(rDia);
 tSize = length(tDia);
@@ -79,18 +80,17 @@ global n s Ds Ed Dg
 global H M N tau tGrid rGrid rDia tDia rSize tSize eq1Size
 global q Ss x1
 
-q(x1, rDia, tDia)=reshape(X(1:eq1Size), rSize, tSize);
-%Ss(x1, tDia)=X(eq1Size:eq1Size+tSize);
+[q, Ss] = unpack(X);
 Z=zeros(rSize, tSize);
-%ZZ=zeros(tSize, 1);
+Zss=zeros(tSize, 1);
 for k = tDia
     for j = rDia
         if j == 1
             eq1 = q(x1, 2, k) - q(x1, 1, k);
         else
             sumR = 0;
-            q(x1, M, k) = Ss(tGrid(k)).^n;
-            %ZZ(k-1) = 
+            %q(x1, M, k) = Ss(k).^n;
+            Zss(k-1) =  q(x1, M, k) - Ss(k).^n;
             for m = 1:M
                 sumR = sumR + (s/rGrid(j) * A(j, m)  + B(j, m))*q(x1, m, k);
             end
@@ -100,8 +100,17 @@ for k = tDia
     end
 end
 Z = reshape(Z, rSize*tSize,1);
+Z = [Z;Zss];
 end
 
+function [q, Ss] = unpack(X)
+global x1 rDia tDia eq1Size rSize tSize
+    q(x1, rDia, tDia)=reshape(X(1:eq1Size), rSize, tSize);
+    Ss(x1, tDia)=X(eq1Size:eq1Size+tSize);
+end
+
+function pack()
+end
 %grid t have to be the same, for simplicity
 function plotEvol(sol1, x1, sol2, x2)
     

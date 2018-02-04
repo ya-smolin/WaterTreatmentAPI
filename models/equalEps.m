@@ -1,4 +1,5 @@
 function [isEqualStr, isEqual] = equalEps(a, b, epsilon)
+isEqualStr = 'cannot be underfined';
 if nargin == 2
     epsilon = 1e-7;
 end
@@ -11,5 +12,6 @@ if(isEqual)
 else
     isEqualStr = 'No';
 end
+
 end
 

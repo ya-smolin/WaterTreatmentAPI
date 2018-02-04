@@ -53,6 +53,7 @@ classdef YacobiPolynomial
         
         function pass = unitTestOrthogonality(obj)
             warning('off', 'MATLAB:integral:MaxIntervalCountReached');
+            ansStr = 'Yes';
             pass = true;
             SAMPLE_NUM = 5;
             SAFE_JACOBI_RANGE_MAX = 20;
