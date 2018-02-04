@@ -1,8 +1,11 @@
 function [isEqualStr, isEqual] = equalEps(a, b, epsilon)
 if nargin == 2
-    epsilon = eps('single');
+    epsilon = 1e-7;
 end
-isEqual = sum(sum(abs((a - b) ./ max(a, b)))) < epsilon;
+absErr = abs(a - b);
+relErr = absErr./max(abs(a), abs(b));
+isEqualM = absErr.*relErr < epsilon;
+isEqual = isempty(find(isEqualM == 0, 1));
 if(isEqual)
     isEqualStr = 'Yes';
 else

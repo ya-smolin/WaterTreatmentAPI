@@ -57,116 +57,110 @@
 % dbstop(dbstat);
 % format shortG;
 % clc
-    
+
 %pathGen = genpath('C:\WORKSPACE\adsorption book\');
 %addpath(pathGen);
 
 clear;
 % DECLARE SOME GLOBAL VARIABLES
-	global A C n u	
-	global s
-	global yb
-	global t_final
-   
-   %undimensional half time
-   %@Ref: page 542, Eq. (9.2-36a)
-   half_time   = [0.19674 0.0631 0.03055];%
-   
+global A C n u
+global s
+global yb
+global t_final
+
+%undimensional half time
+%@Ref: page 542, Eq. (9.2-36a)
+half_time   = [0.19674 0.0631 0.03055];%
+
 %----------------------------------------------------------------
 % USER SUPPLY SECTION
-   s           = 2;	                % particle shape factor
-   yi          = 0;                 % nondimensional initial concentration
-   yb          = 1;                 % nondimensional bulk concentration
-   t_initial   = 0;                 % initial time for integration
-   t_final     = 20*half_time(s+1); % final time for integration
-%----------------------------------------------------------------   
-   
+s           = 2;	                % particle shape factor
+yi          = 0;                 % nondimensional initial concentration
+yb          = 1;                 % nondimensional bulk concentration
+t_initial   = 0;                 % initial time for integration
+t_final     = 20*half_time(s+1); % final time for integration
+%----------------------------------------------------------------
+
 % COLLOCATION SECTION
-    n			= 10;	
-    n0			= 0;
-    n1			= 1;
-    al          = 1;
-    be          = (s-1)/2;
+n			= 10;
+n0			= 0;
+n1			= 1;
+al          = 1;
+be          = (s-1)/2;
 
-	nt				= n + n0 + n1;
-	A				= zeros(nt); 
-	B				= zeros(nt); 
-	C				= zeros(nt);
+nt				= n + n0 + n1;
+A				= zeros(nt);
+B				= zeros(nt);
+C				= zeros(nt);
 
-	[dif,u] 	   = JCRoot(n,n0,n1,al,be);
-    yP = YacobiPolynomial(n, al, be);
-    nodes = [yP.u; 1];
-    disp ( ['nodes are equal? ' equalEps(u, nodes)]);
-    lPs = LagrangePolynomials(nodes);
-    derMy=lPs.pNder();
-    disp ( ['der are equal? ' equalEps(derMy, dif)]);
-    
-    Amy=lPs.derValInNodes1(1);
-    Bmy=lPs.derValInNodes1(2);
-    
-	A				= AB(n,n0,n1,1,dif,u);
-	B				= AB(n,n0,n1,2,dif,u);
-    
-    disp ( ['AB are equal? ' equalEps(Amy, A) ' ' equalEps(Bmy, B)]);
-    
-    %banned because of it doesn't work, probably bugs in code
-    %w	= RDW(n,n0,n1,al-1,be,u,dif);
-    
-    yP.unitTestYita()
-    testf = @(x)x.^2;
-    weight = @(x, al, be)(1-x).^al .* x.^be;
-    %TODO: investigate why we have different behavior of w and wMy
-    al=0; be=0;
-    w=lPs.rdw(al, be);
-    wMy=lPs.rdwMy(al, be);
-    disp (['w are equal? ' equalEps(w, wMy)]);
-   
-    int1 = dot(w,weight(lPs.nodes, al, be).*testf(lPs.nodes));
-    int2 = dot(wMy,testf(lPs.nodes));
-    int3 = integral(@(x)yP.weightF(x).*testf(x), 0, 1);
-    
-    disp (['int is as expected? ' num2str([int1 int2 int3])]);
-    
-    
-	for i=1:nt
-		C(i,:)	= 4.*u(i).*B(i,:) + 2.*(s+1).*A(i,:);
-	end
+[dif,u] 	   = JCRoot(n,n0,n1,al,be);
+yP = YacobiPolynomial(n, al, be);
+nodes = [yP.u; 1];
+disp ( ['nodes are equal? ' equalEps(u, nodes)]);
+lPs = LagrangePolynomials(nodes);
+derMy=lPs.pNder();
+disp ( ['der are equal? ' equalEps(derMy, dif)]);
+
+Amy=lPs.derValInNodes1(1);
+Bmy=lPs.derValInNodes1(2);
+
+A				= AB(n,n0,n1,1,dif,u);
+B				= AB(n,n0,n1,2,dif,u);
+
+disp ( ['AB are equal? ' equalEps(Amy, A) ' ' equalEps(Bmy, B)]);
+
+%banned because of it doesn't work, probably bugs in code
+%wEr	= RDW(n,n0,n1,al,be,u,dif);
+
+yP.unitTestYita()
+testf = @(x)x.^2;
+
+weight = @(x, al, be)(1-x).^al .* x.^be;
+%TODO: investigate why we have different behavior of w and wMy
+Radau.unitTestRDW();
+
+[wNewNodes, nodes1] = Radau.rdwNewNodes(n, n0, n1);
+wExactInt = Radau.rdwExactInt(nodes);
+
+for i=1:nt
+    C(i,:)	= 4.*u(i).*B(i,:) + 2.*(s+1).*A(i,:);
+end
 
 % ODE SOLVER
-	omega0 			= yi*ones(n,1);
-	options			= odeset('Reltol',1e-2,'Abstol',1e-5,'bdf','off');
-	[tout,omega] 	= ode15s('Fadsorb0',[t_initial t_final],omega0,options);	
+omega0 			= yi*ones(n,1);
+options			= odeset('Reltol',1e-2,'Abstol',1e-5,'bdf','off');
+[tout,omega] 	= ode15s('Fadsorb0',[t_initial t_final],omega0,options);
 
 %---------------------------------------------------------------
 % SOLUTION: CONCENTRATION PROFILES AND FRACTIONAL UPTAKE
 %---------------------------------------------------------------
-	yout				= [omega  yb*ones(length(tout),1)];
+yout				= [omega  yb*ones(length(tout),1)];
 
-    
+
 % CALCULATE THE FRACTIONAL UPTAKE
-	for i=1:length(tout)
-		fractional_uptake(i) 	= ( dot(w, yout(i,:)) - yi )/(yb - yi);
-        fractional_uptakeMy(i) 	= ( dot(wMy, yout(i,:)) - yi )/(yb - yi);
-	end
+for i=1:length(tout)
+    fractional_uptake(i) 	= ( dot(wNewNodes, yout(i,:)) - yi )/(yb - yi);
+    fractional_uptakeMy(i) 	= ( dot(wExactInt, yout(i,:)) - yi )/(yb - yi);
+end
 
 %-----------
 % PLOTTING
 %-----------
-	figure(1)
-	subplot(1,2,1)
-   plot(tout,fractional_uptake,'k-');
-   hold on
-   plot(tout,fractional_uptakeMy,'ro');
-   xlabel('time');
-   ylabel('Fractional uptake');grid;
-   title('FRACTIONAL UPTAKE vs TIME');
-   
-   subplot(1,2,2)
-    dt = floor(length(tout)/10);
-    for i=1:dt:length(tout)
-		plot(sqrt(u),yout(i,1:n+1),'b-',sqrt(u),yout(i,1:n+1),'bo');
-		hold on
-   end
-   xlabel('Intra-particle distance');
-   ylabel('Intra-particle concentration');
-   title('CONCENTRATION PROFILES');
+figure(1)
+subplot(1,2,1)
+plot(tout,fractional_uptake,'k-');
+hold on
+plot(tout,fractional_uptakeMy,'r-');
+xlabel('time');
+ylabel('Fractional uptake');grid;
+title('FRACTIONAL UPTAKE vs TIME');
+
+subplot(1,2,2)
+dt = floor(length(tout)/10);
+for i=1:dt:length(tout)
+    plot(sqrt(u),yout(i,1:n+1),'b-',sqrt(u),yout(i,1:n+1),'bo');
+    hold on
+end
+xlabel('Intra-particle distance');
+ylabel('Intra-particle concentration');
+title('CONCENTRATION PROFILES');

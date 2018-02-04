@@ -1,10 +1,10 @@
 
 classdef YacobiPolynomial
-    % Orthogonal Polinomial respectively to the weight function W(x)=x^al(1-x)^be
+    % Orthogonal Polinomial respectively to the weight function W(x)=x^be(1-x)^al
     % in the interval [0,1]. In literature they called SHIFTED due to the
     % transformation x=2*u-1 on the domains x[-1, 1] to domains u[0, 1].
     properties
-        al, be %weight function  W(x)=x^al(1-x)^be params, -1 < al, be < 1
+        al, be %weight function  W(x)=x^be(1-x)^al params, -1 < al, be
         n      %polynomial degree == roots num
         p      %polynomial params p'*[1, x, x^2, ..., x^n]
         u      %polynomial roots in interval [0, 1]
@@ -52,6 +52,7 @@ classdef YacobiPolynomial
         end
         
         function pass = unitTestOrthogonality(obj)
+            warning('off', 'MATLAB:integral:MaxIntervalCountReached');
             pass = true;
             SAMPLE_NUM = 5;
             SAFE_JACOBI_RANGE_MAX = 20;
@@ -62,21 +63,20 @@ classdef YacobiPolynomial
                 j = ij(2, SAMPLE_NUM);
                 if i ~= j
                     intVal = checkOrthogonality(obj, i, j);
-                    if(intVal > eps('single') || intVal < -eps('single'))
-                        warning('incorrect jacobi polynomials');
-                        pass = false;
-                    end
+                    [ansStr, pass] = equalEps(intVal, 1e-10);
+                    break;
                 end
             end
+            disp(['your Jacobi polynomials are orthogonal? :', ansStr]);
         end
         
         function intVal = checkOrthogonality(obj, i, j)
             yP1 = YacobiPolynomial(i, obj.al, obj.be);
             yP2 = YacobiPolynomial(j, obj.al, obj.be);
             intVal = integral(@(x)weightF(obj, x).*yP1.val(x).*yP2.val(x),0,1);
-            %             w = warning('query','last');
-            %             id = w.identifier;
-            %             warning('off',id);
+            %w = warning('query','last');
+            %id = w.identifier;
+            %warning('off',id);
         end
         
         function w = weightF(obj, x)
@@ -105,8 +105,8 @@ classdef YacobiPolynomial
         end
         
         function yita3 = yNparams(obj, i)
-             N = obj.n;
-             yita3 = obj.p(N-i+1)*(-1)^(N-i);
+            N = obj.n;
+            yita3 = obj.p(N-i+1)*(-1)^(N-i);
         end
         
         function ret = cn(obj)
@@ -126,12 +126,22 @@ classdef YacobiPolynomial
             yita2 = yNrecursive(obj, i);
             yita3 = yNparams(obj, i);
             
-            [~, isSame1]=equalEps(yita1, yita2);
-            [~, isSame2]=equalEps(yita2, yita3);
-            disp(['are yNdirect, yNrecursive and yNparams the same? ', num2str(isSame1 && isSame2)]);
-            disp(num2str([yita1, yita2, yita3]));
+            disp(['are yNdirect, yNrecursive and yNparams the same? ', equalEpsN(yita1, yita2, yita3)...
+                ' ' num2str([yita1, yita2, yita3])]);
+        end
+        
+        function nodes = rootsWithBoundary(obj, n0, n1)
+            nodes = obj.u;
+            if n1==1
+                nodes = [nodes; 1];
+            end
+            if n0==1
+                nodes = [0; nodes];
+            end
         end
     end
+    
+    
     
 end
 
