@@ -1,0 +1,281 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath}    % need for subequations
+\usepackage{verbatim}   % useful for program listings
+\usepackage{blindtext}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{breqn}
+\usepackage{systeme}
+\usepackage[
+singlelinecheck=false %
+]{caption}
+\pagenumbering{gobble}
+\usepackage[margin=0.5in]{geometry}
+
+\title{Biosorption model}
+\author{Yaroslav Smolin}
+% above is the preamble
+\begin{document}
+\maketitle	
+\section{Kinetic equation}
+
+\setlength{\abovetopsep}{4pt}
+\begin{table}[!htbp]
+	\caption{Naming convention}
+	\begin{tabular}{l l}
+		\toprule
+		
+		\midrule
+		x , r, t  &   axial coordinate\\
+		H, M, N  & radial coordinate\\
+		i, j, k & time coordinate\\
+		m, p & upper-inner loop variables\\
+		s, Ed & coefficients\\
+		$\tau$ & timestep $t_{k+1}$ - $t_k$\\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+Kinetic equation
+\begin{equation}
+\dfrac{\partial q(x,r,t)}{\partial t}=\dfrac{E_d}{r^s}\cdot\dfrac{\partial }{\partial r}\left(r^s\dfrac{\partial q(x,r,t)}{\partial r}\right)
+\end{equation}
+\begin{equation}
+\dfrac{\partial q(x,r,t)}{\partial t}=E_d\dfrac{s}{r}\dfrac{\partial q(x,r,t)}{\partial r}  +E_d\dfrac{\partial^2q(x,r,t) }{\partial r^2}
+\end{equation}
+Initial and boundary conditions
+\begin{equation}\label{eq:kineticB}
+q(x_i, r_j, t_1) = 0
+\qquad
+\left.\dfrac{\partial q(x,r,t)}{\partial r}\right\vert^{(i, 1, k)}=0 
+\qquad
+q(x_i, r_M, t_k) = S_s(x_i, t_k)^n
+\end{equation}
+\indent Simplify and make expansion in $(i, j, k)$ point
+\begin{equation}\label{eq:kinetic}
+\left.\dfrac{\partial q(x,r,t)}{\partial t}\right\vert^{(i, j, k)}=
+	E_d\dfrac{s}{r}\cdot\left.\dfrac{\partial q(x,r,t)}{\partial  r}\right\vert^{(i, j, k)} + E_d \left.\dfrac{\partial^2 q(x,r,t)}{\partial r^2}\right\vert^{(i, j, k)}
+\end{equation}
+
+Lagrange polynomial approximation
+\begin{equation}
+q(x,r,t)=
+\sum_{m=1}^M\prod_{p=1}^M \dfrac{r-r_p}{r_m-r_p}\cdot  q(x,r_m,t)=
+\sum_{m=1}^Ml_m(r)\cdot  q(x,r_m,t)
+\end{equation}
+\begin{equation}\label{eq:dqdr}
+\left.\dfrac{\partial q(x,r,t)}{\partial r}\right\vert^{(i, j, k)}=
+\left.\sum_{m=1}^Ml'_m(r)\cdot  q(x,r_m,t)\right\vert^{(i, j, k)}=
+\sum_{m=1}^MA_{jm}\cdot  q(x_i,r_m,t_k)
+\end{equation}
+\begin{equation}\label{eq:ddqdr2}
+\left.\dfrac{\partial^2 q(x,r,t)}{\partial r^2}\right\vert^{(i, j, k)}=
+\left.\sum_{m=1}^Ml''_m(r)\cdot  q(x,r_m,t)\right\vert^{(i, j, k)}=
+\sum_{m=1}^MB_{jm}\cdot  q(x_i,r_m,t_k)
+\end{equation}
+\begin{equation}\label{eq:dqdt}
+\left.\dfrac{\partial q(x,r,t)}{\partial t}\right\vert^{(i, j, k)}=
+\dfrac{q(x_i,r_j,t_{k}) - q(x_i,r_j,t_{k-1})}{\tau}
+\end{equation}\\
+
+Insert  \eqref{eq:dqdr}, \eqref{eq:ddqdr2}, \eqref{eq:dqdt} into \eqref{eq:kinetic} 
+\begin{equation}
+\dfrac{q(x_i,r_j,t_{k}) - q(x_i,r_j,t_{k-1})}{\tau}=
+E_d\dfrac{s}{r_j}\cdot \sum_{m=1}^MA_{jm} \cdot q(x_i,r_m,t_{k}) + E_d\sum_{m=1}^MB_{jm}\cdot  q(x_i,r_m,t_{k})
+\end{equation}
+\begin{equation} \label{eq:almostMain}
+\tau E_d\sum_{m=1}^M \left(\dfrac{s}{r_j} A_{jm} + B_{jm} \right) q(x_i,r_m,t_{k}) - q(x_i,r_j,t_{k}) + q(x_i,r_j,t_{k-1}) = 0
+\end{equation}
+
+Upper boundary equation
+\begin{equation} \label{eq:boundaryUp}
+	q(x_i,r_M,t_k) = S_s(x_i, t_k)^n, \qquad r_M=1
+\end{equation}
+Inserting equation \eqref{eq:boundaryUp} into \eqref{eq:almostMain} we will get
+\begin{equation} \label{eq:main}
+\tau E_d\sum_{m=1}^{M-1} \left(\dfrac{s}{r_j} \cdot A_{jm} + B_{jm} \right) q(x_i,r_m,t_{k})  +\tau E_d\left(sA_{jM} + B_{jM} \right)S_s(x_i, t_k)^n - q(x_i,r_j,t_{k}) + q(x_i,r_j,t_{k-1})  = 0
+\end{equation}
+for each slice of column $x_i \in [x_1, x_2 ..., x_i, ..., x_{H-1}]$ (roots of Legendre polynomial of $H-1$ degree) \\
+for each time layer $t_i \in [t_2, t_3, ..., t_k, ..., t_N]$, where $t_k=\tau*(k-1)$ \\
+for each radial layer  $r_j \in [r_2 ..., r_j, ..., r_{M-1}]$ (roots of Legendre polynomial of $M-2$ degree) we use \eqref{eq:main}\\
+for $t_1$ we have already known $q$ from initial conditions $q(x_i,r_j,t_1) = 0$\\
+The last equation are added from lower boundary condition
+\begin{equation}\label{eq:lowerBoundary}
+	\left.\dfrac{\partial q(x,r,t)}{\partial r}\right\vert^{(i, 1, k)}=
+	\dfrac{q(x_i,r_2,t_{k}) - q(x_i,r_1,t_{k})}{r_2-r_1}=0 \indent\Rightarrow\indent q(x_i,r_2,t_k) - q(x_i,r_1,t_k)=0
+\end{equation}
+Depends on $S_s(x, t)$.
+
+\section{Adsorbent phase material balance}
+\begin{equation}
+	 \frac{\partial}{\partial t} \cdot \int_{0}^{1}q(x,r,t)r^2dr=St(1+B_0L_{fmax})^2\left(S(x,t)-\frac{D_gL_f(x,t)S_{f,av}(x,t)}{B_1+S_{f,av}(x,t)}\right)
+\end{equation}
+
+, where
+\begin{equation}
+D_1 = St(1+B_0L_{fmax})^2
+\qquad
+S_{f,av}(x,t) = \frac{1}{M}\sum_{j=1}^{M}S_f(x, r_j, t)
+\end{equation}
+Let's introduce new function
+\begin{equation}\label{eq:S_av}
+	S_{av}(x,t) = \frac{S_{f,av}(x,t)}{B_1+S_{f,av}(x,t)} = 
+	\frac{\frac{1}{M}\sum_{j=1}^{M}S_f(x, f_j, t)}{B_1+\frac{1}{M}\sum_{j=1}^{M}S_f(x, f_j, t)}=
+	\frac{S_s(x, t)+\sum_{j=2}^{M-1}S_f(x, f_j, t)+S_{fs}(x, t)}{MB_1+S_s(x, t)+\sum_{j=2}^{M-1}S_f(x, f_j, t)+S_{fs}(x, t)}
+\end{equation}
+
+Substitute and get
+\begin{equation}
+\frac{\partial}{\partial t} \cdot\int_{0}^{1}q(x,r,t)r^2dr=
+D_1(S(x,t)-D_gL_f(x,t)S_{av}(x,t))
+\end{equation}
+Depends on $L_f$, $S_f$, $S$\\
+As we use Legandre polynomials with weight function $W(x) =r^\alpha(1-r)^\beta$, with $\alpha = 0$ and $\beta = 2$ we get $W(x) = r^2$, that is why in $(i, j, k)$ we get
+\begin{equation}
+\frac{\partial}{\partial t} \cdot \int_{0}^{1}q(x_i,r,t)r^2dr=
+\frac{\partial}{\partial t} \cdot\sum_{m=1}^{M} W_m \cdot q(x_i,r_m,t)=
+\sum_{m=1}^{M} W_m \cdot \frac{\partial q(x_i,r_m,t)}{\partial t}=
+\sum_{m=1}^{M} W_m \cdot \frac{q(x_i,r_m,t_k) - q(x_i,r_m,t_{k-1})}{\tau}
+\end{equation}
+All together in  $(i, j, k)$ we get
+\begin{equation}
+\sum_{m=1}^{M} W_m \cdot \frac{q(x_i,r_m,t_k) - q(x_i,r_m,t_{k-1})}{\tau}=
+D_1(S(x_i,t_k)-D_1S(x_i,t_k)-D_1D_gL_f(x_i,t_k)S_{av}(x_i,t_k)
+\end{equation}
+\begin{equation}
+\sum_{m=1}^{M} W_m \cdot q(x_i,r_m,t_k)-\tau D_1S(x_i,t_k)-\tau D_1D_gL_f(x_i,t_k)S_{av}(x_i, t_k) =
+\sum_{m=1}^{M} W_m \cdot q(x_i,r_m,t_{k-1})
+\end{equation}
+
+
+\section{Liquid phase material balance}
+\begin{equation}
+\dfrac{\partial S(x,t)}{\partial t}=D\cdot\dfrac{\partial^2 S(x,t)}{\partial x^2}-D_gSt(1+B_0L_{max})^2(S(x,t)-S_{fs}(x,t))
+\end{equation}
+Initial and boundary conditions
+\begin{equation}\label{eq:liqPhaseB}
+	S(x, t_1) = 0
+	\qquad
+	S(x_1, t) = 1 
+	\qquad
+	\dfrac{\partial S(x_H,t)}{\partial x}=0
+\end{equation}
+\textbf{Depends on} $S_{fs}(x, t)$\\
+
+Let $D_1=D_gSt(1+B_0L_{max})^2$ and use extension in $(i, k)$
+\begin{equation}\label{eq:liqPhase}
+\left.\dfrac{\partial S(x,t)}{\partial t}\right|^{(i, k)}=
+D \cdot \left.\dfrac{\partial^2 S(x,t)}{\partial x^2}\right|^{(i, k)}-D_1(S(x_i,t_k)-S_{fs}(x_i,t_k))
+\end{equation}
+Using for \eqref{eq:liqPhase} the same Lagrange polynomial expansion \eqref{eq:ddqdr2} and finite difference scheme \eqref{eq:dqdt} as for kinetic equation  \eqref{eq:kinetic} we get:
+\begin{equation}\label{eq:liqPhase1}
+\dfrac{S(x_i,t_k) - S(x_i,t_{k-1})}{\tau}=
+D\sum_{m=1}^NB_{im}\cdot  S(x_i, t_k) - D_1(S(x_i,t_k)-S_{fs}(x_i,t_k))
+\end{equation}
+\begin{equation}\label{eq:liqPhase2}
+S(x_i,t_k) - S(x_i,t_{k-1})=
+\tau D\sum_{m=2}^NB_{im}\cdot S(x_i, t_k) +  \tau D B_{i1}S(x_1, t_k) -  \tau D_1(S(x_i,t_k)-S_{fs}(x_i,t_k))
+\end{equation}
+With lower boundary condtions \eqref{eq:liqPhaseB} we get
+\begin{equation}\label{eq:liqPhaseMain}
+(1  + \tau D_1)S(x_i,t_k) - \tau D\sum_{m=2}^NB_{im}S(x_i,t_k) - S_{fs}(x_i,t_k)  =
+\tau D B_{i1} + S(x_i,t_{k-1}) 
+\end{equation}
+for each time layer $t_i \in [t_2, t_3, ..., t_k, ..., t_N]$, where $t_k=\tau*(k-1)$ \\
+for each slice of column $x_i \in [x_2, x_3 ..., x_i, ..., x_{H-1}]$ (roots of Legendre polynomial of $H-2$ degree) we use \eqref{eq:liqPhaseMain}, for $t_1$ we have already known $S(t_1, x)$ from initial conditions $S(t_1, x) = 0$\\
+The last equation are added from upper boundary condition \eqref{eq:liqPhaseB}
+\begin{equation}
+\left.\dfrac{\partial S(x,t)}{\partial x}\right\vert^{(i, k)}=
+\dfrac{S(x_i, t_k) - S(x_{i+1}, t_k)}{x_2-x_1}=0 \indent\Rightarrow\indent S(x_i, t_k) - S(x_{i+1}, t_k)=0
+\end{equation}\\
+\section{Biofilm equations: diffusion and biodegradation, grows and decay }
+diffusion and biodegradation
+\begin{equation}
+\frac{\partial^2 S_f(x,r,t)}{\partial r^2}=A_2\frac{L_f^2(x,t)S_f(x,r,t)}{B_1+S_f(x,r,t)}
+\end{equation}
+Boundary condition for $S_f$
+\begin{equation}\label{eq:SfB}
+ 	S_f(x,r=1,t)=S_s(x, t) \qquad S_f(x,r=1+L_f/R,t) = S_{fs}(x, t) 
+\end{equation}
+$S_f$ defines only on interval $(1, 1+L_f/R)$ and $q$ only on the interval $(0, 1)$. For me it is seems more logical totally separate this variables, introducing a new variable on the interval $(0,1)$. That will make possible to use orthogonal collocation and normalize result. The linear transformation $f=(r - 1)\cdot R/L_f$ maps the interval $(1, 1+L_f/R)$ to the interval $(0,1)$, replace $r$ with $f$ using $r=1+fL_f/R$ we get\\
+\begin{equation}
+\left(\frac{R}{L_f}\right)^2\frac{\partial^2 S_f(x,f,t)}{\partial f^2}=A_2\frac{L_f^2(x,t)S_f(x,f,t)}{B_1+S_f(x,f,t)}
+\end{equation}
+But what is more important the boundary conditions are
+\begin{equation}\label{eq:SfB}
+S_f(x,f=0,t)=S_s(x, t) \qquad S_f(x,f=1,t) = S_{fs}(x, t) 
+\end{equation}
+The grows and decay looks like that
+\begin{equation}\label{eq:growsDecay}
+\frac{\partial L_f(x,t)}{\partial t}=D_gA_3\frac{S_{f,av}(x,t)}{B_1+S_{f,av}(x,t)}-D_gA_3L_f{(x,t)}
+\end{equation}\\	 
+Initial and boundary conditions
+\begin{equation}\label{eq:biofilmB}
+L_f(x, t_1) = L_{f0}
+\qquad
+L_f(x, t_N) = 1 
+\end{equation}
+\textbf{Depends on} $S_s(x,t)$ and $S_{fs}(x,t)$\\
+Let's for $f$ the collocation discretization be the same as for $r$, and we will use the same notation just for convenience. Using \eqref{eq:ddqdr2} and expansion in $(i,j,k)$ we get
+\begin{equation}
+\sum_{m=1}^MB_{jm}\cdot S_f(x_i,f_m,t_k)\equiv B_{j1}S_s(x_i, t) + \sum_{m=2}^{M-1}B_{jm}S_f(x_i,f_m,t_k)+S_{fs}(x_i, t_k)=
+A_2\frac{L_f^2(x_i,t_j)S_f(x_i,f_j,t_k)}{B_1+S_f(x_i,f_j,t_k)}
+\end{equation}
+substitute \eqref{eq:S_av} to \eqref{eq:growsDecay} and make expansion in $(i, k)$ we get
+\begin{equation}
+\frac{L_f(x_i,t_k)-L_f(x_i,t_{k-1})}{\tau}=D_gA_3S_{av}(x_i, t_k)-D_gA_3L_f{(x_i,t_k)}
+\end{equation}
+\begin{equation}
+	L_f(x_i,t_k)-\tau D_gA_3S_{av}(x_i, t_k)+\tau D_gA_3L_f{(x_i,t_k)}=
+	L_f(x_i,t_{k-1})
+\end{equation}
+
+
+
+
+
+\section{all together}
+Unknown function $L_f(x, t)$, $q(x, r, t)$, $S_s(x,t)$, $S_f(x, r, t)$, $S_{fs}(x,t)$, $S(x,t)$\\
+Initial conditions
+\begin{equation}
+	\begin{array}{c}
+	L_f(x, t_1) = L_{f0} \quad q(x, r, t_1) = 0\\
+	S_s(x,t_1) = 0, \qquad S_f(x, r, t_1) = 0,\qquad S_{fs}(x,t_1) = 0,\qquad S(x,t_1) = 0
+	\end{array}
+\end{equation}
+Boundary conditions
+\begin{equation}
+\begin{array}{c}
+\left.\dfrac{\partial q(x,r,t)}{\partial r}\right\vert^{(i, 1, k)}=0 \qquad q(x_i, r_M, t_k) = S_s(x_i, t_k)^n\\
+S(x_1, t) = 1 \qquad \left.\dfrac{\partial S(x,t)}{\partial x}\right\vert^{(H, j, k)}=0\\
+S_f(x,f_1,t) = S_s(x, t) \qquad S_f(x,f_M,t) = S_{fs}(x, t)
+\end{array}
+\end{equation}
+For each time step $t = [t_2, t_3, ..., t_N]$. Do not forget that on $t_N$ the $L_f(x,t)=L_{fmax}$, so it is already known.\\	
+for each slice of column $x_i \in [x_1, x_2 ..., x_i, ..., x_H]$ and for each radial layer  $r_j \in [r_2 ..., r_j, ..., r_{M-1}]$ and for $f_j \in [f_2 ..., f_j, ..., f_{M-1}]$ we have discretization. So it's big non linear equation and we need to solve it. Just do it, man!\\
+For $x_1$ due to boundary conditions we get simpler system, so $S(x_1, t)=1$ and $S_{fs}(x_1, t)=1$ are already known. We get:
+\begin{equation}
+\tau E_d\sum_{m=1}^{M-1} \left(\dfrac{s}{r_j} \cdot A_{jm} + B_{jm} \right) q(x_1,r_m,t_{k})  +\tau E_d\left(sA_{jM} + B_{jM} \right)S_s(x_i, t_k)^n - q(x_1,r_j,t_{k}) + q(x_1,r_j,t_{k-1})  = 0
+\end{equation}
+\begin{equation}
+\sum_{m=1}^{M} W_m \cdot q(x_1,r_m,t_k)-\tau D_1D_gL_f(x_1,t_k)S_{av}(x_1, t_k) =
+\tau D_1 + \sum_{m=1}^{M} W_m \cdot q(x_1,r_m,t_{k-1})
+\end{equation}
+\begin{equation}
+L_f(x_1,t_k)-\tau D_gA_3S_{av}(x_1, t_k)+\tau D_gA_3L_f{(x_1,t_k)}=
+L_f(x_i,t_{k-1})
+\end{equation}
+\begin{equation}
+B_{j1}S_s(x_1, t) + \sum_{m=2}^{M-1}B_{jm}S_f(x_1,f_m,t_k)+1=
+A_2\frac{L_f^2(x_1,t_j)S_f(x_1,f_j,t_k)}{B_1+S_f(x_1,f_j,t_k)}
+\end{equation}
+\begin{equation}
+S_{av}(x_1,t_k) = 
+\frac{S_s(x_1, t_k)+\sum_{j=2}^{M-1}S_f(x_1, f_j, t_k)+1}{MB_1+S_s(x_1, t)+\sum_{j=2}^{M-1}S_f(x_1, f_j,t_k)+1}
+\end{equation}
+We can found out extra boundary conditions
+\begin{equation}
+S_{fs}(x_1, t) = 1
+\end{equation}
+\end{document}

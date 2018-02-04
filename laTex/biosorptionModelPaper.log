@@ -1,0 +1,580 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500 64-bit) (preloaded format=pdflatex 2018.1.28)  3 FEB 2018 23:01
+entering extended mode
+**./biosorptionModelPaper.tex
+(biosorptionModelPaper.tex
+LaTeX2e <2017-04-15>
+Babel <3.15> and hyphenation patterns for 75 language(s) loaded.
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\article.cls"
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\size12.clo"
+File: size12.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsmath.sty"
+Package: amsmath 2017/09/02 v2.17a AMS math features
+\@mathmargin=\skip43
+
+For additional information on amsmath, use the `?' option.
+("C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amstext.sty"
+Package: amstext 2000/06/29 v2.01 AMS text
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsgen.sty"
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks14
+\ex@=\dimen103
+))
+("C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsbsy.sty"
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen104
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsopn.sty"
+Package: amsopn 2016/03/08 v2.02 operator names
+)
+\inf@bad=\count87
+LaTeX Info: Redefining \frac on input line 213.
+\uproot@=\count88
+\leftroot@=\count89
+LaTeX Info: Redefining \overline on input line 375.
+\classnum@=\count90
+\DOTSCASE@=\count91
+LaTeX Info: Redefining \ldots on input line 472.
+LaTeX Info: Redefining \dots on input line 475.
+LaTeX Info: Redefining \cdots on input line 596.
+\Mathstrutbox@=\box26
+\strutbox@=\box27
+\big@size=\dimen105
+LaTeX Font Info:    Redeclaring font encoding OML on input line 712.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 713.
+\macc@depth=\count92
+\c@MaxMatrixCols=\count93
+\dotsspace@=\muskip10
+\c@parentequation=\count94
+\dspbrk@lvl=\count95
+\tag@help=\toks15
+\row@=\count96
+\column@=\count97
+\maxfields@=\count98
+\andhelp@=\toks16
+\eqnshift@=\dimen106
+\alignsep@=\dimen107
+\tagshift@=\dimen108
+\tagwidth@=\dimen109
+\totwidth@=\dimen110
+\lineht@=\dimen111
+\@envbody=\toks17
+\multlinegap=\skip44
+\multlinetaggap=\skip45
+\mathdisplay@stack=\toks18
+LaTeX Info: Redefining \[ on input line 2817.
+LaTeX Info: Redefining \] on input line 2818.
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\tools\verbatim.sty"
+Package: verbatim 2014/10/28 v1.5q LaTeX2e package for verbatim enhancements
+\every@verbatim=\toks19
+\verbatim@line=\toks20
+\verbatim@in@stream=\read1
+)
+(C:\Users\yaros\AppData\Roaming\MiKTeX\2.9\tex\latex\blindtext\blindtext.sty
+Package: blindtext 2012/01/06 V2.0 blindtext-Package
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\tools\xspace.sty"
+Package: xspace 2014/10/28 v1.13 Space after command names (DPC,MH)
+)
+\c@blindtext=\count99
+\c@Blindtext=\count100
+\c@blind@countparstart=\count101
+\blind@countxx=\count102
+\blindtext@numBlindtext=\count103
+\blind@countyy=\count104
+\c@blindlist=\count105
+\c@blindlistlevel=\count106
+\c@blindlist@level=\count107
+\blind@listitem=\count108
+\c@blind@listcount=\count109
+\c@blind@levelcount=\count110
+\blind@mathformula=\count111
+\blind@Mathformula=\count112
+\c@blind@randomcount=\count113
+\c@blind@randommax=\count114
+\c@blind@pangramcount=\count115
+\c@blind@pangrammax=\count116
+)
+(C:\Users\yaros\AppData\Roaming\MiKTeX\2.9\tex\latex\booktabs\booktabs.sty
+Package: booktabs 2005/04/14 v1.61803 publication quality tables
+\heavyrulewidth=\dimen112
+\lightrulewidth=\dimen113
+\cmidrulewidth=\dimen114
+\belowrulesep=\dimen115
+\belowbottomsep=\dimen116
+\aboverulesep=\dimen117
+\abovetopsep=\dimen118
+\cmidrulesep=\dimen119
+\cmidrulekern=\dimen120
+\defaultaddspace=\dimen121
+\@cmidla=\count117
+\@cmidlb=\count118
+\@aboverulesep=\dimen122
+\@belowrulesep=\dimen123
+\@thisruleclass=\count119
+\@lastruleclass=\count120
+\@thisrulewidth=\dimen124
+)
+(C:\Users\yaros\AppData\Roaming\MiKTeX\2.9\tex\latex\breqn\breqn.sty
+(C:\Users\yaros\AppData\Roaming\MiKTeX\2.9\tex\latex\l3kernel\expl3.sty
+Package: expl3 2017/12/16 L3 programming layer (loader) 
+
+(C:\Users\yaros\AppData\Roaming\MiKTeX\2.9\tex\latex\l3kernel\expl3-code.tex
+Package: expl3 2017/12/16 L3 programming layer (code)
+\c_max_int=\count121
+\l_tmpa_int=\count122
+\l_tmpb_int=\count123
+\g_tmpa_int=\count124
+\g_tmpb_int=\count125
+\g__intarray_font_int=\count126
+\g__prg_map_int=\count127
+\c_log_iow=\count128
+\l_iow_line_count_int=\count129
+\l__iow_line_target_int=\count130
+\l__iow_one_indent_int=\count131
+\l__iow_indent_int=\count132
+\c_zero_dim=\dimen125
+\c_max_dim=\dimen126
+\l_tmpa_dim=\dimen127
+\l_tmpb_dim=\dimen128
+\g_tmpa_dim=\dimen129
+\g_tmpb_dim=\dimen130
+\c_zero_skip=\skip46
+\c_max_skip=\skip47
+\l_tmpa_skip=\skip48
+\l_tmpb_skip=\skip49
+\g_tmpa_skip=\skip50
+\g_tmpb_skip=\skip51
+\c_zero_muskip=\muskip11
+\c_max_muskip=\muskip12
+\l_tmpa_muskip=\muskip13
+\l_tmpb_muskip=\muskip14
+\g_tmpa_muskip=\muskip15
+\g_tmpb_muskip=\muskip16
+\l_keys_choice_int=\count133
+\c__fp_leading_shift_int=\count134
+\c__fp_middle_shift_int=\count135
+\c__fp_trailing_shift_int=\count136
+\c__fp_big_leading_shift_int=\count137
+\c__fp_big_middle_shift_int=\count138
+\c__fp_big_trailing_shift_int=\count139
+\c__fp_Bigg_leading_shift_int=\count140
+\c__fp_Bigg_middle_shift_int=\count141
+\c__fp_Bigg_trailing_shift_int=\count142
+\c__fp_rand_size_int=\count143
+\c__fp_rand_four_int=\count144
+\c__fp_rand_eight_int=\count145
+\l__sort_length_int=\count146
+\l__sort_min_int=\count147
+\l__sort_top_int=\count148
+\l__sort_max_int=\count149
+\l__sort_true_max_int=\count150
+\l__sort_block_int=\count151
+\l__sort_begin_int=\count152
+\l__sort_end_int=\count153
+\l__sort_A_int=\count154
+\l__sort_B_int=\count155
+\l__sort_C_int=\count156
+\l__tl_build_start_index_int=\count157
+\l__tl_build_index_int=\count158
+\l__tl_analysis_normal_int=\count159
+\l__tl_analysis_index_int=\count160
+\l__tl_analysis_nesting_int=\count161
+\l__tl_analysis_type_int=\count162
+\l__regex_internal_a_int=\count163
+\l__regex_internal_b_int=\count164
+\l__regex_internal_c_int=\count165
+\l__regex_balance_int=\count166
+\l__regex_group_level_int=\count167
+\l__regex_mode_int=\count168
+\c__regex_cs_in_class_mode_int=\count169
+\c__regex_cs_mode_int=\count170
+\l__regex_catcodes_int=\count171
+\l__regex_default_catcodes_int=\count172
+\c__regex_catcode_D_int=\count173
+\c__regex_catcode_S_int=\count174
+\c__regex_catcode_L_int=\count175
+\c__regex_catcode_O_int=\count176
+\c__regex_catcode_A_int=\count177
+\c__regex_all_catcodes_int=\count178
+\l__regex_show_lines_int=\count179
+\l__regex_min_state_int=\count180
+\l__regex_max_state_int=\count181
+\l__regex_left_state_int=\count182
+\l__regex_right_state_int=\count183
+\l__regex_capturing_group_int=\count184
+\l__regex_min_pos_int=\count185
+\l__regex_max_pos_int=\count186
+\l__regex_curr_pos_int=\count187
+\l__regex_start_pos_int=\count188
+\l__regex_success_pos_int=\count189
+\l__regex_curr_char_int=\count190
+\l__regex_curr_catcode_int=\count191
+\l__regex_last_char_int=\count192
+\l__regex_case_changed_char_int=\count193
+\l__regex_curr_state_int=\count194
+\l__regex_step_int=\count195
+\l__regex_min_active_int=\count196
+\l__regex_max_active_int=\count197
+\l__regex_replacement_csnames_int=\count198
+\l__regex_match_count_int=\count199
+\l__regex_min_submatch_int=\count266
+\l__regex_submatch_int=\count267
+\l__regex_zeroth_submatch_int=\count268
+\g__debug_trace_regex_int=\count269
+\c_empty_box=\box28
+\l_tmpa_box=\box29
+\l_tmpb_box=\box30
+\g_tmpa_box=\box31
+\g_tmpb_box=\box32
+\l__box_top_dim=\dimen131
+\l__box_bottom_dim=\dimen132
+\l__box_left_dim=\dimen133
+\l__box_right_dim=\dimen134
+\l__box_top_new_dim=\dimen135
+\l__box_bottom_new_dim=\dimen136
+\l__box_left_new_dim=\dimen137
+\l__box_right_new_dim=\dimen138
+\l__box_internal_box=\box33
+\l__coffin_internal_box=\box34
+\l__coffin_internal_dim=\dimen139
+\l__coffin_offset_x_dim=\dimen140
+\l__coffin_offset_y_dim=\dimen141
+\l__coffin_x_dim=\dimen142
+\l__coffin_y_dim=\dimen143
+\l__coffin_x_prime_dim=\dimen144
+\l__coffin_y_prime_dim=\dimen145
+\c_empty_coffin=\box35
+\l__coffin_aligned_coffin=\box36
+\l__coffin_aligned_internal_coffin=\box37
+\l_tmpa_coffin=\box38
+\l_tmpb_coffin=\box39
+\l__coffin_display_coffin=\box40
+\l__coffin_display_coord_coffin=\box41
+\l__coffin_display_pole_coffin=\box42
+\l__coffin_display_offset_dim=\dimen146
+\l__coffin_display_x_dim=\dimen147
+\l__coffin_display_y_dim=\dimen148
+\l__coffin_bounding_shift_dim=\dimen149
+\l__coffin_left_corner_dim=\dimen150
+\l__coffin_right_corner_dim=\dimen151
+\l__coffin_bottom_corner_dim=\dimen152
+\l__coffin_top_corner_dim=\dimen153
+\l__coffin_scaled_total_height_dim=\dimen154
+\l__coffin_scaled_width_dim=\dimen155
+)
+(C:\Users\yaros\AppData\Roaming\MiKTeX\2.9\tex\latex\l3kernel\l3pdfmode.def
+File: l3pdfmode.def 2017/03/18 v L3 Experimental driver: PDF mode
+\l__driver_color_stack_int=\count270
+\l__driver_tmp_box=\box43
+))
+Package: breqn 2017/01/27 v0.98e Breaking equations
+
+(C:\Users\yaros\AppData\Roaming\MiKTeX\2.9\tex\latex\breqn\flexisym.sty
+Package: flexisym 2017/01/27 v0.98e Make math characters macros
+LaTeX Info: Redefining \textprime on input line 300.
+LaTeX Info: Redefining \not on input line 358.
+
+(C:\Users\yaros\AppData\Roaming\MiKTeX\2.9\tex\latex\breqn\cmbase.sym
+File: cmbase.sym 2007/12/19 v0.92
+LaTeX Info: Redefining \hbar on input line 325.
+LaTeX Info: Redefining \surd on input line 327.
+LaTeX Info: Redefining \angle on input line 335.
+LaTeX Info: Redefining \neq on input line 336.
+LaTeX Info: Redefining \mapsto on input line 337.
+LaTeX Info: Redefining \cong on input line 338.
+LaTeX Info: Redefining \notin on input line 341.
+LaTeX Info: Redefining \rightleftharpoons on input line 342.
+LaTeX Info: Redefining \doteq on input line 343.
+LaTeX Info: Redefining \hookrightarrow on input line 344.
+LaTeX Info: Redefining \hookleftarrow on input line 345.
+LaTeX Info: Redefining \bowtie on input line 346.
+LaTeX Info: Redefining \models on input line 347.
+LaTeX Info: Redefining \Longrightarrow on input line 348.
+LaTeX Info: Redefining \longrightarrow on input line 349.
+LaTeX Info: Redefining \Longleftarrow on input line 350.
+LaTeX Info: Redefining \longleftarrow on input line 351.
+LaTeX Info: Redefining \longmapsto on input line 352.
+LaTeX Info: Redefining \longleftrightarrow on input line 353.
+LaTeX Info: Redefining \Longleftrightarrow on input line 354.
+LaTeX Info: Redefining \cdots on input line 358.
+LaTeX Info: Redefining \vdots on input line 361.
+LaTeX Info: Redefining \ddots on input line 366.
+)
+(C:\Users\yaros\AppData\Roaming\MiKTeX\2.9\tex\latex\breqn\mathstyle.sty
+Package: mathstyle 2017/01/27 0.98e Tracking mathstyle implicitly
+LaTeX Info: Redefining \displaystyle on input line 93.
+LaTeX Info: Redefining \textstyle on input line 95.
+LaTeX Info: Redefining \scriptstyle on input line 97.
+LaTeX Info: Redefining \scriptscriptstyle on input line 99.
+LaTeX Info: Redefining \genfrac on input line 145.
+))
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\keyval.sty"
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks21
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\tools\calc.sty"
+Package: calc 2014/10/28 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count271
+\calc@Bcount=\count272
+\calc@Adimen=\dimen156
+\calc@Bdimen=\dimen157
+\calc@Askip=\skip52
+\calc@Bskip=\skip53
+LaTeX Info: Redefining \setlength on input line 80.
+LaTeX Info: Redefining \addtolength on input line 81.
+\calc@Ccount=\count273
+\calc@Cskip=\skip54
+)
+\inf@bad=\count274
+\maxint=\count275
+\listwidth=\dimen158
+\eqnumsep=\dimen159
+\eqmargin=\dimen160
+\eqlinespacing=\skip55
+\eqlineskip=\skip56
+\eqlineskiplimit=\dimen161
+\eqbinoffset=\muskip17
+\eqdelimoffset=\muskip18
+\eqindentstep=\dimen162
+\eqstyle=\toks22
+\eqbreakdepth=\count276
+\eqinterlinepenalty=\count277
+\intereqpenalty=\count278
+\intereqskip=\skip57
+\prerelpenalty=\count279
+\prebinoppenalty=\count280
+\Dmedmuskip=\muskip19
+\Dthickmuskip=\muskip20
+\eqleftskip=\skip58
+\eqrightskip=\skip59
+\eq@vspan=\skip60
+\eq@binoffset=\muskip21
+\EQ@box=\box44
+\EQ@copy=\box45
+\EQ@numbox=\box46
+\eq@wdNum=\dimen163
+\GRP@numbox=\box47
+\grp@wdNum=\dimen164
+\eq@lines=\count281
+\eq@curline=\count282
+\eq@badness=\count283
+\EQ@vims=\count284
+\eq@dp=\dimen165
+\eq@wdL=\dimen166
+\eq@wdT=\dimen167
+\eq@wdMin=\dimen168
+\grp@wdL=\dimen169
+\grp@wdR=\dimen170
+\grp@wdT=\dimen171
+\eq@wdRmax=\dimen172
+\eq@firstht=\dimen173
+\eq@wdCond=\dimen174
+\eq@indentstep=\dimen175
+\eq@linewidth=\dimen176
+\grp@linewidth=\dimen177
+\eq@hshift=\dimen178
+\eq@given@sidespace=\dimen179
+\mathindent=\dimen180
+\eq@final@linecount=\count285
+\eq@wdR=\dimen181
+\EQ@continue=\toks23
+\lr@level=\count286
+\GRP@queue=\toks24
+\GRP@box=\box48
+\GRP@wholebox=\box49
+\darraycolsep=\skip61
+\cur@row=\count287
+\cur@col=\count288
+\conditionsep=\skip62
+)
+(C:\Users\yaros\AppData\Roaming\MiKTeX\2.9\tex\systeme\latex\systeme.sty
+(C:\Users\yaros\AppData\Roaming\MiKTeX\2.9\tex\latex\xstring\xstring.sty
+(C:\Users\yaros\AppData\Roaming\MiKTeX\2.9\tex\generic\xstring\xstring.tex
+\@xs@message=\write3
+\integerpart=\count289
+\decimalpart=\count290
+)
+Package: xstring 2013/10/13  v1.7c  String manipulations (C Tellechea)
+)
+(C:\Users\yaros\AppData\Roaming\MiKTeX\2.9\tex\generic\systeme\systeme.tex
+\SYS@systemecode=\toks25
+\SYS@systempreamble=\toks26
+\SYSeqnum=\count291
+)
+Package: systeme 2018/01/01 v0.31 Mise en forme de systemes d'equations (CT)
+)
+(C:\Users\yaros\AppData\Roaming\MiKTeX\2.9\tex\latex\caption\caption.sty
+Package: caption 2016/02/21 v3.3-144 Customizing captions (AR)
+
+(C:\Users\yaros\AppData\Roaming\MiKTeX\2.9\tex\latex\caption\caption3.sty
+Package: caption3 2016/05/22 v1.7-166 caption3 kernel (AR)
+Package caption3 Info: TeX engine: e-TeX on input line 67.
+\captionmargin=\dimen182
+\captionmargin@=\dimen183
+\captionwidth=\dimen184
+\caption@tempdima=\dimen185
+\caption@indent=\dimen186
+\caption@parindent=\dimen187
+\caption@hangindent=\dimen188
+)
+\c@ContinuedFloat=\count292
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\geometry\geometry.sty"
+Package: geometry 2010/09/12 v5.6 Page Geometry
+
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\ifpdf.sty"
+Package: ifpdf 2017/03/15 v3.2 Provides the ifpdf switch
+)
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\ifvtex.sty"
+Package: ifvtex 2016/05/16 v1.6 Detect VTeX and its facilities (HO)
+Package ifvtex Info: VTeX not detected.
+)
+("C:\Program Files\MiKTeX 2.9\tex\generic\ifxetex\ifxetex.sty"
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+\Gm@cnth=\count293
+\Gm@cntv=\count294
+\c@Gm@tempcnt=\count295
+\Gm@bindingoffset=\dimen189
+\Gm@wd@mp=\dimen190
+\Gm@odd@mp=\dimen191
+\Gm@even@mp=\dimen192
+\Gm@layoutwidth=\dimen193
+\Gm@layoutheight=\dimen194
+\Gm@layouthoffset=\dimen195
+\Gm@layoutvoffset=\dimen196
+\Gm@dimlist=\toks27
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\geometry\geometry.cfg"))
+(biosorptionModelPaper.aux
+
+LaTeX Warning: Label `eq:SfB' multiply defined.
+
+)
+\openout1 = `biosorptionModelPaper.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: End \AtBeginDocument code.
+
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: <default>
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(36.135pt, 542.02501pt, 36.135pt)
+* v-part:(T,H,B)=(36.135pt, 722.7pt, 36.135pt)
+* \paperwidth=614.295pt
+* \paperheight=794.96999pt
+* \textwidth=542.02501pt
+* \textheight=722.7pt
+* \oddsidemargin=-36.135pt
+* \evensidemargin=-36.135pt
+* \topmargin=-73.135pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=12.0pt
+* \footskip=30.0pt
+* \marginparwidth=44.0pt
+* \marginparsep=10.0pt
+* \columnsep=10.0pt
+* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 80--81
+
+ []
+
+[1
+
+{C:/Users/yaros/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
+Overfull \hbox (12.16562pt too wide) detected at line 140
+[] \OMS/cmsy/m/n/12  [][] \OML/cmm/m/it/12 q\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 
+x[]; r; t\OT1/cmr/m/n/12 )\OML/cmm/m/it/12 r[]dr \OT1/cmr/m/n/12 = [] \OMS/cmsy
+/m/n/12  [] \OML/cmm/m/it/12 W[] \OMS/cmsy/m/n/12  \OML/cmm/m/it/12 q\OT1/cmr
+/m/n/12 (\OML/cmm/m/it/12 x[]; r[]; t\OT1/cmr/m/n/12 ) = [] \OML/cmm/m/it/12 W[
+] \OMS/cmsy/m/n/12  [] \OT1/cmr/m/n/12 = [] \OML/cmm/m/it/12 W[] \OMS/cmsy/m/n
+/12  []
+ []
+
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 163--165
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 191--192
+
+ []
+
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 200--202
+
+ []
+
+[4] [5] (biosorptionModelPaper.aux)
+
+LaTeX Warning: There were multiply-defined labels.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 11675 strings out of 493312
+ 217285 string characters out of 3138899
+ 262296 words of memory out of 3000000
+ 15196 multiletter control sequences out of 15000+200000
+ 536258 words of font info for 43 fonts, out of 3000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 36i,9n,38p,10394b,275s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Pr
+ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program Fi
+les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program Files/MiKT
+eX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Program Files/MiKTeX 2.9/fo
+nts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1
+/public/amsfonts/cm/cmr17.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/a
+msfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm
+/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.p
+fb>
+Output written on biosorptionModelPaper.pdf (5 pages, 124439 bytes).
+PDF statistics:
+ 54 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+
