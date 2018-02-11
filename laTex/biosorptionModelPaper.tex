@@ -7,6 +7,7 @@
 \usepackage{booktabs}
 \usepackage{breqn}
 \usepackage{systeme}
+\usepackage{tabularx}
 \usepackage[
 singlelinecheck=false %
 ]{caption}
@@ -18,7 +19,22 @@ singlelinecheck=false %
 % above is the preamble
 \begin{document}
 \maketitle	
-\section{Kinetic equation}
+
+\section{Conventions}
+Unknown function $\bar{L}_f(\bar{x}, \bar{t})$, $\bar{q}(\bar{x}, \bar{r}, \bar{t})$, $\bar{S}_s(\bar{x},\bar{t})$, $\bar{S}_f(\bar{x}, \bar{r}, \bar{t})$, $\bar{S}_{fs}(\bar{x},  \bar{t})$, $\bar{S}(\bar{x}, \bar{t})$, $\bar{S_{av}}(\bar{x}, \bar{t})$, the bar under the functions and functions variables means that they are not normalized and have their dimensions. Transformation to the dimensionless form is made by next equations:\\
+
+\begin{equation}
+x=\frac{\bar{x}}{L} \quad r=\frac{\bar{r}}{R}  \quad t=\frac{\bar{t}}{T\cdot D_g}
+\end{equation}
+\begin{equation}\label{eq:nondimArgs}
+\bar{x}=xL \quad \bar{r}=rR  \quad \bar{t}=t\cdot T D_g
+\end{equation}
+\begin{equation}\label{eq:nondimSubs}
+E_d=\frac{TD_sD_g}{R^2} \quad D_g=\frac{\rho_aq_0(1-\epsilon)}{\epsilon S_0}
+\quad D=D_gD_x\frac{T}{L^2}
+\quad St=3k_fT\frac{1-\epsilon}{R\epsilon}
+\quad B_0=\frac{L_{fmax}}{R}
+\end{equation}
 
 \setlength{\abovetopsep}{4pt}
 \begin{table}[!htbp]
@@ -27,17 +43,43 @@ singlelinecheck=false %
 		\toprule
 		
 		\midrule
-		x , r, t  &   axial coordinate\\
-		H, M, N  & radial coordinate\\
-		i, j, k & time coordinate\\
-		m, p & upper-inner loop variables\\
-		s, Ed & coefficients\\
+		$x$, $r$, $u$, $t$ & axial, radial substrate $(0, R)$, radial biofilm $(R, R+L_f)$, and time coordinate\\
+		$M$, $M$, $M$, $N$  & grid size for $x$, $r$, $u$, $t$\\
+		$i$, $j$, $j$, $k$ &  grid index for $x$, $r$, $u$, $t$\\
+		$m$, $p$ & upper-inner loop variables\\
+		$\bar{v}$ & bar under variable mark that dimensionless procedure was not done yet\\
+		 $Ed$ & ration of the surface diffusion transport to bulk transport\\
 		$\tau$ & timestep $t_{k+1}$ - $t_k$\\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
-Kinetic equation
+
+\noindent
+\begin{table}%
+	\caption{Experimental data \label{tab:expData}}
+\begin{tabularx}{\linewidth}{ | c | X | c | c | } \hline
+	$R$ & radius of the particle, $r_M$ or $r_{max}$ & 0.039 & $cm$ \\
+	$L$ & length of the adsorber, $x_M$ or $x_{max}$ & 40 & $cm$ \\
+	$T$ & time of supervising, $t_N$ or $t_{max}; \quad T=\tau_{res}\cdot n_{t}$ & $3.6\cdot 10^4$ & $s$ \\
+	$\tau_{res}$ & adsorber resident time, or empty bed contact time, $\tau_{res}=L/V_{x}$ &  & $s$ \\
+	$n_{res}$ & number of treatment cycles supervised $n_t=T/\tau_{res}$ &  & $-$ \\
+	$Ds$ & surface diffusion coefficient of the substrate within the adsorbent particle &$9.12\cdot 10^{-9}$& $cm^2/s$\\
+	$s$ & symmetry of a particle, $0$ - slab, $1$ - cylinder, $2$ - sphere & 2 & - \\
+	$\rho_a$ & density of adsorbent particle &$7\cdot 10^{2}$& $mg/cm^3$\\
+	$q0$ & substrate concentration in adsorbent in equilibrium with the initial adsorber influent concentration $S_0$ & $(S_0)^n$ & $mg/mg$ \\
+	$\epsilon$ & adsorber bed porosity & $0.7$ & $-$\\
+	$S_0$ & Initial substrate concentration & $0.11 $ & $mg/cm^3$\\
+	\hline
+\end{tabularx}
+\end{table}     
+
+\section{Kinetic equation}
+Standard equation
+\begin{equation}
+\dfrac{\partial \bar{q}(\bar{x},\bar{r},\bar{t})}{\partial \bar{t}}=\dfrac{D_s}{\bar{r}^s}\cdot\dfrac{\partial }{\partial \bar{r}}\left(\bar{r}^s\dfrac{\partial \bar{q}(\bar{x},\bar{r},\bar{t})}{\partial \bar{r}}\right)
+\end{equation}
+Using \eqref{eq:nondimSubs} and  \eqref{eq:nondimArgs} we get dimensionless equation
 \begin{equation}
 \dfrac{\partial q(x,r,t)}{\partial t}=\dfrac{E_d}{r^s}\cdot\dfrac{\partial }{\partial r}\left(r^s\dfrac{\partial q(x,r,t)}{\partial r}\right)
 \end{equation}
@@ -109,49 +151,66 @@ Depends on $S_s(x, t)$.
 
 \section{Adsorbent phase material balance}
 \begin{equation}
-	 \frac{\partial}{\partial t} \cdot \int_{0}^{1}q(x,r,t)r^2dr=St(1+B_0L_{fmax})^2\left(S(x,t)-\frac{D_gL_f(x,t)S_{f,av}(x,t)}{B_1+S_{f,av}(x,t)}\right)
+\frac{\partial}{\partial t} \int_{0}^{R}q(x,r,t)4\pi r^2dr=
+\frac{k_fA_pR^3}{3V_c\rho}(S(x,t)-S_{fs}(x,t))-\frac{R^2kX_f}{\rho Y}L_f(x,t)\frac{S_{f,av}(x,t)}{k_s+S_{f,av}(x,t)}
 \end{equation}
-
-, where
+where 
 \begin{equation}
-D_1 = St(1+B_0L_{fmax})^2
-\qquad
 S_{f,av}(x,t) = \frac{1}{M}\sum_{j=1}^{M}S_f(x, r_j, t)
 \end{equation}
 Let's introduce new function
 \begin{equation}\label{eq:S_av}
-	S_{av}(x,t) = \frac{S_{f,av}(x,t)}{B_1+S_{f,av}(x,t)} = 
-	\frac{\frac{1}{M}\sum_{j=1}^{M}S_f(x, f_j, t)}{B_1+\frac{1}{M}\sum_{j=1}^{M}S_f(x, f_j, t)}=
-	\frac{S_s(x, t)+\sum_{j=2}^{M-1}S_f(x, f_j, t)+S_{fs}(x, t)}{MB_1+S_s(x, t)+\sum_{j=2}^{M-1}S_f(x, f_j, t)+S_{fs}(x, t)}
+S_{av}(x,t) = \frac{S_{f,av}(x,t)}{k_s+S_{f,av}(x,t)} = 
+\frac{\frac{1}{M}\sum_{j=1}^{M}S_f(x, u_j, t)}{k_s+\frac{1}{M}\sum_{j=1}^{M}S_f(x, u_j, t)}=
+\frac{S_s(x, t)+\sum_{j=2}^{M-1}S_f(x, u_j, t)+S_{fs}(x, t)}{Mk_s+S_s(x, t)+\sum_{j=2}^{M-1}S_f(x, u_j, t)+S_{fs}(x, t)}
 \end{equation}
-
-Substitute and get
+Dimensionless form:
+\begin{equation}\label{eq:S_avLess}
+S_{av}(x,t) = \frac{S_{f,av}(x,t)}{k_s/S_0+S_{f,av}(x,t)}
+\end{equation}
+Then material balance equation will look like
 \begin{equation}
-\frac{\partial}{\partial t} \cdot\int_{0}^{1}q(x,r,t)r^2dr=
-D_1(S(x,t)-D_gL_f(x,t)S_{av}(x,t))
+\frac{\partial}{\partial t} \int_{0}^{R}q(x,r,t)4\pi r^2dr=
+\frac{k_fA_pR^3}{3V_c\rho}(S(x,t)-S_{fs}(x,t))-\frac{R^2kX_f}{\rho Y}L_f(x,t)S_{av}(x,t)
+\end{equation}
+Dimensionless form:
+\begin{equation}
+\frac{\partial}{\partial t} \int_{0}^{1}q(x,r,t)r^2dr={\frac{T D_gA_pk_fS_0}{12\pi V_c \rho}}(S(x,t)-S_f(x,t))-{\frac{TD_gkX_fL_{max}}{4R\pi \rho Y}}L_f(x,t)S_{av}(x,t)
+\end{equation}
+I got another result than in the paper. You can use any result that you like.
+\begin{equation}
+K_1=\frac{T D_gA_pk_fS_0}{12\pi V_c \rho}
+\quad
+K_2=\frac{TD_gkX_fL_{max}}{4R\pi \rho Y}
+\end{equation}
+We get the equation
+\begin{equation}
+\frac{\partial}{\partial t} \int_{0}^{1}q(x,r,t)r^2dr=K_1(S(x,t)-S_f(x,t))-K_2L_f(x,t)S_{av}(x,t)
 \end{equation}
 Depends on $L_f$, $S_f$, $S$\\
 As we use Legandre polynomials with weight function $W(x) =r^\alpha(1-r)^\beta$, with $\alpha = 0$ and $\beta = 2$ we get $W(x) = r^2$, that is why in $(i, j, k)$ we get
 \begin{equation}
-\frac{\partial}{\partial t} \cdot \int_{0}^{1}q(x_i,r,t)r^2dr=
-\frac{\partial}{\partial t} \cdot\sum_{m=1}^{M} W_m \cdot q(x_i,r_m,t)=
-\sum_{m=1}^{M} W_m \cdot \frac{\partial q(x_i,r_m,t)}{\partial t}=
-\sum_{m=1}^{M} W_m \cdot \frac{q(x_i,r_m,t_k) - q(x_i,r_m,t_{k-1})}{\tau}
+\frac{\partial}{\partial t} \int_{0}^{1}q(x_i,r,t)r^2dr=
+\frac{\partial}{\partial t} \sum_{m=1}^{M} W_m q(x_i,r_m,t)=
+\sum_{m=1}^{M} W_m  \frac{\partial q(x_i,r_m,t)}{\partial t}=
+\sum_{m=1}^{M} W_m  \frac{q(x_i,r_m,t_k) - q(x_i,r_m,t_{k-1})}{\tau}
 \end{equation}
 All together in  $(i, j, k)$ we get
 \begin{equation}
 \sum_{m=1}^{M} W_m \cdot \frac{q(x_i,r_m,t_k) - q(x_i,r_m,t_{k-1})}{\tau}=
-D_1(S(x_i,t_k)-D_1S(x_i,t_k)-D_1D_gL_f(x_i,t_k)S_{av}(x_i,t_k)
+K_1S(x_i,t_k)-K_1S_f(x_i,t_k)-K_2L_f(x_i,t_k)S_{av}(x_i,t_k)
 \end{equation}
 \begin{equation}
-\sum_{m=1}^{M} W_m \cdot q(x_i,r_m,t_k)-\tau D_1S(x_i,t_k)-\tau D_1D_gL_f(x_i,t_k)S_{av}(x_i, t_k) =
-\sum_{m=1}^{M} W_m \cdot q(x_i,r_m,t_{k-1})
+\frac{1}{\tau}\sum_{m=1}^{M} W_m[q(x_i,r_m,t_k) - q(x_i,r_m,t_{k-1})] -K_1S(x_i,t_k)+K_1S_f(x_i,t_k)+K_2L_f(x_i,t_k)S_{av}(x_i,t_k)=0
 \end{equation}
 
-
+%TODO:check dimensionless of this 
 \section{Liquid phase material balance}
 \begin{equation}
-\dfrac{\partial S(x,t)}{\partial t}=D\cdot\dfrac{\partial^2 S(x,t)}{\partial x^2}-D_gSt(1+B_0L_{max})^2(S(x,t)-S_{fs}(x,t))
+\dfrac{\partial S(x,t)}{\partial t}=D\dfrac{\partial^2 S(x,t)}{\partial x^2}-V_x\dfrac{\partial S(x,t)}{\partial x}-\frac{3k_f(R+L_f(x,t))^2(1-\epsilon)}{R^3 \epsilon}(S(x,t)-S_{fs}(x,t))
+\end{equation}
+\begin{equation}
+\dfrac{\partial S(x,t)}{\partial t}=D\cdot\dfrac{\partial^2 S(x,t)}{\partial x^2}-n_tD_g\dfrac{\partial S(x,t)}{\partial x}-D_gSt(1+B_0L_{max})^2(S(x,t)-S_{fs}(x,t))
 \end{equation}
 Initial and boundary conditions
 \begin{equation}\label{eq:liqPhaseB}
@@ -166,21 +225,22 @@ Initial and boundary conditions
 Let $D_1=D_gSt(1+B_0L_{max})^2$ and use extension in $(i, k)$
 \begin{equation}\label{eq:liqPhase}
 \left.\dfrac{\partial S(x,t)}{\partial t}\right|^{(i, k)}=
-D \cdot \left.\dfrac{\partial^2 S(x,t)}{\partial x^2}\right|^{(i, k)}-D_1(S(x_i,t_k)-S_{fs}(x_i,t_k))
+D \cdot \left.\dfrac{\partial^2 S(x,t)}{\partial x^2}\right|^{(i, k)}-\left.n_tD_g\dfrac{\partial S(x,t)}{\partial x}\right|^{(i, k)}-D_1(S(x_i,t_k)-S_{fs}(x_i,t_k))
 \end{equation}
 Using for \eqref{eq:liqPhase} the same Lagrange polynomial expansion \eqref{eq:ddqdr2} and finite difference scheme \eqref{eq:dqdt} as for kinetic equation  \eqref{eq:kinetic} we get:
 \begin{equation}\label{eq:liqPhase1}
 \dfrac{S(x_i,t_k) - S(x_i,t_{k-1})}{\tau}=
-D\sum_{m=1}^NB_{im}\cdot  S(x_i, t_k) - D_1(S(x_i,t_k)-S_{fs}(x_i,t_k))
+D\sum_{m=1}^MB_{im}\cdot S(x_m, t_k) -n_tD_g\sum_{m=1}^MA_{im}\cdot S(x_m, t_k) - D_1(S(x_i,t_k)-S_{fs}(x_i,t_k))
 \end{equation}
-\begin{equation}\label{eq:liqPhase2}
-S(x_i,t_k) - S(x_i,t_{k-1})=
-\tau D\sum_{m=2}^NB_{im}\cdot S(x_i, t_k) +  \tau D B_{i1}S(x_1, t_k) -  \tau D_1(S(x_i,t_k)-S_{fs}(x_i,t_k))
-\end{equation}
-With lower boundary condtions \eqref{eq:liqPhaseB} we get
+\begin{multline}
+\tau D\sum_{m=2}^MB_{im}\cdot S(x_m, t_k) + \tau D B_{i1}S(x_1, t_k) -\tau n_tD_g\sum_{m=2}^MA_{im}\cdot S(x_m, t_k) -  \tau n_tD_g A_{i1}S(x_1, t_k)\\
+-\tau D_1(S(x_i,t_k)-S_{fs}(x_i,t_k))
+ = S(x_i,t_k) - S(x_i,t_{k-1})
+\end{multline}
+With lower boundary condtions \eqref{eq:liqPhaseB} and remember $D=D_kD_g$ we get
 \begin{equation}\label{eq:liqPhaseMain}
-(1  + \tau D_1)S(x_i,t_k) - \tau D\sum_{m=2}^NB_{im}S(x_i,t_k) - S_{fs}(x_i,t_k)  =
-\tau D B_{i1} + S(x_i,t_{k-1}) 
+(1  + \tau D_1)S(x_i,t_k) - \tau D_g\sum_{m=2}^M(D_kB_{im}-n_tA_{im})S(x_m,t_k) - \tau D_1S_{fs}(x_i,t_k)  =
+\tau D B_{i1} - \tau D_g n_t A_{i1} + S(x_i,t_{k-1}) 
 \end{equation}
 for each time layer $t_i \in [t_2, t_3, ..., t_k, ..., t_N]$, where $t_k=\tau*(k-1)$ \\
 for each slice of column $x_i \in [x_2, x_3 ..., x_i, ..., x_{H-1}]$ (roots of Legendre polynomial of $H-2$ degree) we use \eqref{eq:liqPhaseMain}, for $t_1$ we have already known $S(t_1, x)$ from initial conditions $S(t_1, x) = 0$\\
@@ -189,58 +249,84 @@ The last equation are added from upper boundary condition \eqref{eq:liqPhaseB}
 \left.\dfrac{\partial S(x,t)}{\partial x}\right\vert^{(i, k)}=
 \dfrac{S(x_i, t_k) - S(x_{i+1}, t_k)}{x_2-x_1}=0 \indent\Rightarrow\indent S(x_i, t_k) - S(x_{i+1}, t_k)=0
 \end{equation}\\
-\section{Biofilm equations: diffusion and biodegradation, grows and decay }
+\section{Biofilm equations of diffusion and biodegradation}
 diffusion and biodegradation
 \begin{equation}
-\frac{\partial^2 S_f(x,r,t)}{\partial r^2}=A_2\frac{L_f^2(x,t)S_f(x,r,t)}{B_1+S_f(x,r,t)}
+{\frac {\partial }{\partial t}}S_f(x,r,t) =D_f\frac{\partial ^{2}}{\partial {r}^2}S_f(x,r,t) - \frac {k X S_f(x,r,t)}{Y({ks}+S_f(x,r,t))}
+\end{equation}
+We use in model simpler version for stationary conditions
+\begin{equation}
+D_f\frac{\partial ^{2}}{\partial {r}^2}S_f(x,r,t) - \frac {k X S_f(x,r,t)}{Y({ks}+S_f(x,r,t))} = 0
 \end{equation}
 Boundary condition for $S_f$
 \begin{equation}\label{eq:SfB}
- 	S_f(x,r=1,t)=S_s(x, t) \qquad S_f(x,r=1+L_f/R,t) = S_{fs}(x, t) 
+S_f(x,r=R,t)=S_s(x, t) \qquad S_f(x,r=R+L_f(x,t),t) = S_{fs}(x, t) 
 \end{equation}
-$S_f$ defines only on interval $(1, 1+L_f/R)$ and $q$ only on the interval $(0, 1)$. For me it is seems more logical totally separate this variables, introducing a new variable on the interval $(0,1)$. That will make possible to use orthogonal collocation and normalize result. The linear transformation $f=(r - 1)\cdot R/L_f$ maps the interval $(1, 1+L_f/R)$ to the interval $(0,1)$, replace $r$ with $f$ using $r=1+fL_f/R$ we get\\
+$S_f$ defines only on interval $(R, R+L_f(x,t))$ and $q$ only on the interval $(0, 1)$. For me it is seems more logical totally separate this variables, introducing a new variable on the interval $(0,1)$. That will make possible to use orthogonal collocation and normalize result. The linear transformation $u=\frac{(r - R)}{L_f(x,t)}$ maps the interval $(R, R+L_f(x,t))$ to the interval $(0,1)$, replace $r$ with $u$ using $r=R+uL_f(x,t)$ we get Using dimensionless variables we get\\
 \begin{equation}
-\left(\frac{R}{L_f}\right)^2\frac{\partial^2 S_f(x,f,t)}{\partial f^2}=A_2\frac{L_f^2(x,t)S_f(x,f,t)}{B_1+S_f(x,f,t)}
+\frac{\partial^2 S_f(x,u,t)}{\partial u^2}=\frac{kXL_f^2(x,t)S_f(x,u,t)}{YD_f(ks+S_f(x,u,t))}
 \end{equation}
-But what is more important the boundary conditions are
-\begin{equation}\label{eq:SfB}
-S_f(x,f=0,t)=S_s(x, t) \qquad S_f(x,f=1,t) = S_{fs}(x, t) 
+Boundary condition for $S_f$
+\begin{equation}\label{eq:SfBu}
+S_f(x,u=0,t)=S_s(x, t) \qquad S_f(x,u=1,t) = S_{fs}(x, t) 
 \end{equation}
-The grows and decay looks like that
-\begin{equation}\label{eq:growsDecay}
-\frac{\partial L_f(x,t)}{\partial t}=D_gA_3\frac{S_{f,av}(x,t)}{B_1+S_{f,av}(x,t)}-D_gA_3L_f{(x,t)}
-\end{equation}\\	 
+Use dimensionless transform we get
+\begin{equation}
+\frac{\partial^2 S_f(x,u,t)}{\partial u^2}=\frac{kXL^2_{max}L_f^2(x,t)S_f(x,u,t)}{YD_f(ks/S_0+S_f(x,u,t))}
+\end{equation}
+To be consistent with paper, substitute $A_2=\frac{kXL^2_{max}}{YD_f}$ and $B_1=ks/S_0$
+\begin{equation}
+\frac{\partial^2 S_f(x,u,t)}{\partial u^2}=A_2\frac{L_f^2(x,t)S_f(x,u,t)}{B_1+S_f(x,u,t)}
+\end{equation}
+\textbf{Depends on} $S_s(x,t)$ and $S_{fs}(x,t)$\\
+Let's for $u$ the collocation discretization be the same as for $r$, and we will use the same notation just for convenience. Using \eqref{eq:ddqdr2} and expansion in $(i,j,k)$ we get
+\begin{equation}
+\sum_{m=1}^MB_{jm}\cdot S_f(x_i,u_m,t_k)= B_{j1}S_s(x_i, t_k) + \sum_{m=2}^{M-1}B_{jm}S_f(x_i,u_m,t_k)+B_{jM}S_{fs}(x_i, t_k)
+\end{equation}
+\begin{equation}
+B_{j1}S_s(x_i, t) + \sum_{m=2}^{M-1}B_{jm}S_f(x_i,u_m,t_k)+B_{jM}S_{fs}(x_i, t_k)=A_2\frac{L_f^2(x_i,t_j)S_f(x_i,u_j,t_k)}{B_1+S_f(x_i,u_j,t_k)}
+\end{equation}
+
+\section{Biofilm equations of grows and decay}
+\begin{equation}
+\frac{\partial L_f(x,t)}{\partial t}=k\frac{S_{f,av}(x,t)}{ks+S_{f,av}(x,t)}-k_dL_f{(x,t)}=kS_{av}(x,t)-k_dL_f{(x,t)}
+\end{equation}
 Initial and boundary conditions
 \begin{equation}\label{eq:biofilmB}
 L_f(x, t_1) = L_{f0}
 \qquad
-L_f(x, t_N) = 1 
+L_f(x, t_N) = L_{max} 
 \end{equation}
-\textbf{Depends on} $S_s(x,t)$ and $S_{fs}(x,t)$\\
-Let's for $f$ the collocation discretization be the same as for $r$, and we will use the same notation just for convenience. Using \eqref{eq:ddqdr2} and expansion in $(i,j,k)$ we get
-\begin{equation}
-\sum_{m=1}^MB_{jm}\cdot S_f(x_i,f_m,t_k)\equiv B_{j1}S_s(x_i, t) + \sum_{m=2}^{M-1}B_{jm}S_f(x_i,f_m,t_k)+S_{fs}(x_i, t_k)=
-A_2\frac{L_f^2(x_i,t_j)S_f(x_i,f_j,t_k)}{B_1+S_f(x_i,f_j,t_k)}
-\end{equation}
+Dimensionless form of that below, where $A_3=kT$
+\begin{equation}\label{eq:growsDecay}
+\frac{\partial L_f(x,t)}{\partial t}=D_gA_3\frac{S_{f,av}(x,t)}{B_1+S_{f,av}(x,t)}-D_gA_3L_f{(x,t)}=D_gA_3S_{av}(x,t)-D_gA_3L_f{(x,t)}
+\end{equation}	 
+where $S_{av}(x,t) = \frac{S_{f,av}(x,t)}{B_1+S_{f,av}(x,t)}$ and $B_1=k_s/S_0$
 substitute \eqref{eq:S_av} to \eqref{eq:growsDecay} and make expansion in $(i, k)$ we get
 \begin{equation}
 \frac{L_f(x_i,t_k)-L_f(x_i,t_{k-1})}{\tau}=D_gA_3S_{av}(x_i, t_k)-D_gA_3L_f{(x_i,t_k)}
 \end{equation}
+Finally, we get
 \begin{equation}
 	L_f(x_i,t_k)-\tau D_gA_3S_{av}(x_i, t_k)+\tau D_gA_3L_f{(x_i,t_k)}=
 	L_f(x_i,t_{k-1})
 \end{equation}
-
+Initial and boundary conditions
+\begin{equation}\label{eq:biofilmB}
+L_f(x, t_1) = \frac{L_{f0}}{L_{max}}
+\qquad
+L_f(x, t_N) = 1 
+\end{equation}
 
 
 
 
 \section{all together}
-Unknown function $L_f(x, t)$, $q(x, r, t)$, $S_s(x,t)$, $S_f(x, r, t)$, $S_{fs}(x,t)$, $S(x,t)$\\
+
 Initial conditions
 \begin{equation}
 	\begin{array}{c}
-	L_f(x, t_1) = L_{f0} \quad q(x, r, t_1) = 0\\
+	L_f(x, t_1) = L_{f0}/L_{max} \quad L_f(x, t_N) = 1 \qquad q(x, r, t_1) = 0\\
 	S_s(x,t_1) = 0, \qquad S_f(x, r, t_1) = 0,\qquad S_{fs}(x,t_1) = 0,\qquad S(x,t_1) = 0
 	\end{array}
 \end{equation}
@@ -249,11 +335,11 @@ Boundary conditions
 \begin{array}{c}
 \left.\dfrac{\partial q(x,r,t)}{\partial r}\right\vert^{(i, 1, k)}=0 \qquad q(x_i, r_M, t_k) = S_s(x_i, t_k)^n\\
 S(x_1, t) = 1 \qquad \left.\dfrac{\partial S(x,t)}{\partial x}\right\vert^{(H, j, k)}=0\\
-S_f(x,f_1,t) = S_s(x, t) \qquad S_f(x,f_M,t) = S_{fs}(x, t)
+S_f(x,u_1,t) = S_s(x, t) \qquad S_f(x,u_M,t) = S_{fs}(x, t)
 \end{array}
 \end{equation}
 For each time step $t = [t_2, t_3, ..., t_N]$. Do not forget that on $t_N$ the $L_f(x,t)=L_{fmax}$, so it is already known.\\	
-for each slice of column $x_i \in [x_1, x_2 ..., x_i, ..., x_H]$ and for each radial layer  $r_j \in [r_2 ..., r_j, ..., r_{M-1}]$ and for $f_j \in [f_2 ..., f_j, ..., f_{M-1}]$ we have discretization. So it's big non linear equation and we need to solve it. Just do it, man!\\
+for each slice of column $x_i \in [x_1, x_2 ..., x_i, ..., x_H]$ and for each radial layer  $r_j \in [r_2 ..., r_j, ..., r_{M-1}]$ and for $u_j \in [u_2 ..., u_j, ..., u_{M-1}]$ we have discretization. So it's big non linear equation and we need to solve it. Just do it, man!\\
 For $x_1$ due to boundary conditions we get simpler system, so $S(x_1, t)=1$ and $S_{fs}(x_1, t)=1$ are already known. We get:
 \begin{equation}
 \tau E_d\sum_{m=1}^{M-1} \left(\dfrac{s}{r_j} \cdot A_{jm} + B_{jm} \right) q(x_1,r_m,t_{k})  +\tau E_d\left(sA_{jM} + B_{jM} \right)S_s(x_i, t_k)^n - q(x_1,r_j,t_{k}) + q(x_1,r_j,t_{k-1})  = 0
@@ -267,15 +353,16 @@ L_f(x_1,t_k)-\tau D_gA_3S_{av}(x_1, t_k)+\tau D_gA_3L_f{(x_1,t_k)}=
 L_f(x_i,t_{k-1})
 \end{equation}
 \begin{equation}
-B_{j1}S_s(x_1, t) + \sum_{m=2}^{M-1}B_{jm}S_f(x_1,f_m,t_k)+1=
-A_2\frac{L_f^2(x_1,t_j)S_f(x_1,f_j,t_k)}{B_1+S_f(x_1,f_j,t_k)}
+\left(B_{j1}S_s(x_1, t_k) + \sum_{m=2}^{M-1}B_{jm}S_f(x_1,u_m,t_k)+B_{jM}\right)-A_2\frac{L_f^2(x_1,t_k)S_f(x_1,u_j,t_k)}{B_1+S_f(x_1,u_j,t_k)}=0
 \end{equation}
 \begin{equation}
 S_{av}(x_1,t_k) = 
-\frac{S_s(x_1, t_k)+\sum_{j=2}^{M-1}S_f(x_1, f_j, t_k)+1}{MB_1+S_s(x_1, t)+\sum_{j=2}^{M-1}S_f(x_1, f_j,t_k)+1}
+\frac{S_s(x_1, t_k)+\sum_{j=2}^{M-1}S_f(x_1, u_j, t_k)+1}{MB_1+S_s(x_1, t_k)+\sum_{j=2}^{M-1}S_f(x_1, u_j,t_k)+1}
 \end{equation}
 We can found out extra boundary conditions
 \begin{equation}
 S_{fs}(x_1, t) = 1
 \end{equation}
+
+%TODO: transition to non dimensional.
 \end{document}
