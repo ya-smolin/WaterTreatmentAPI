@@ -1,5 +1,5 @@
 
-classdef YacobiPolynomial
+classdef YacobiPolynomial < handle
     % Orthogonal Polinomial respectively to the weight function W(x)=x^be(1-x)^al
     % in the interval [0,1]. In literature they called SHIFTED due to the
     % transformation x=2*u-1 on the domains x[-1, 1] to domains u[0, 1].

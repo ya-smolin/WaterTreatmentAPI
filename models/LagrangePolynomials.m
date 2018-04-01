@@ -23,7 +23,7 @@
 % USAGE:
 %	v 	= AB(n,n0,n1,id,d,u)
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-classdef LagrangePolynomials
+classdef LagrangePolynomials < handle
     properties
         nodes
         n
